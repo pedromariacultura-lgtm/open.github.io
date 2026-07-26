@@ -1,5 +1,5 @@
 {
-  "tagline": "TESTE DE ATUALIZAÇÃO 1785049311.0204556",
+  "tagline": "Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.",
   "links": [
     {
       "label": "Edital OPEN Select Natal (Dez)",
@@ -12,6 +12,41 @@
       "label": "Instagram",
       "url": "https://instagram.com/open_designindependente",
       "platform": "instagram",
+      "desc": "",
+      "featured": false
+    },
+    {
+      "label": "TikTok",
+      "url": "https://tiktok.com/@open_designindependente",
+      "platform": "tiktok",
+      "desc": "",
+      "featured": false
+    },
+    {
+      "label": "YouTube",
+      "url": "https://www.youtube.com/@open_designindependente",
+      "platform": "youtube",
+      "desc": "",
+      "featured": false
+    },
+    {
+      "label": "Threads",
+      "url": "https://www.threads.com/@open_designindependente",
+      "platform": "threads",
+      "desc": "",
+      "featured": false
+    },
+    {
+      "label": "X / Twitter",
+      "url": "https://x.com/opendesignindep",
+      "platform": "x",
+      "desc": "",
+      "featured": false
+    },
+    {
+      "label": "Site Oficial",
+      "url": "https://www.opendesignindependente.com.br",
+      "platform": "website",
       "desc": "",
       "featured": false
     }
