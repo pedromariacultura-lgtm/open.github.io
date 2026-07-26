@@ -1,0 +1,26 @@
+{
+  "tagline": "Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.",
+  "links": [
+    {
+      "label": "Instagram",
+      "url": "https://instagram.com/open_designindependente",
+      "platform": "instagram",
+      "desc": "",
+      "featured": false
+    },
+    {
+      "label": "TikTok",
+      "url": "https://tiktok.com/@open_designindependente",
+      "platform": "tiktok",
+      "desc": "",
+      "featured": false
+    },
+    {
+      "label": "asdasd",
+      "url": "asdasd",
+      "platform": "custom",
+      "desc": "asd",
+      "featured": true
+    }
+  ]
+}
