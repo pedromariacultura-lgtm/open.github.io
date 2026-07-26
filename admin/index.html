@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://open-admin.camila-9a7.workers.dev https://raw.githubusercontent.com; img-src 'self' data:; form-action 'self'; base-uri 'self'">
   <title>Admin — OPEN Design Independente</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -141,9 +142,19 @@
 
     function collect() {
       const tagline = document.getElementById('tagline').value.trim();
-      const links = Array.from(document.querySelectorAll('.link-item')).map(item => {
-        const label = item.querySelector('.link-label').value.trim()||'Link';
-        return { label, url: item.querySelector('.link-url').value.trim()||'#', platform: detect(label), desc: item.querySelector('.link-desc').value.trim(), featured: item.querySelector('.link-featured').checked };
+      const links = Array.from(document.querySelectorAll('.link-item')).map((item, i) => {
+        const label = item.querySelector('.link-label').value.trim() || 'Link';
+        let url = item.querySelector('.link-url').value.trim() || '#';
+        // Client-side URL validation: block dangerous protocols
+        const dangerous = /^\s*(javascript|data|vbscript):/i;
+        if (dangerous.test(url)) {
+          throw new Error('Link ' + (i + 1) + ': URLs com javascript:/data:/vbscript: não são permitidas');
+        }
+        // Ensure URL has a protocol
+        if (url !== '#' && !/^https?:\/\//i.test(url)) {
+          url = 'https://' + url;
+        }
+        return { label, url, platform: detect(label), desc: item.querySelector('.link-desc').value.trim(), featured: item.querySelector('.link-featured').checked };
       });
       return { tagline, links };
     }
