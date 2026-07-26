@@ -139,7 +139,7 @@
       });
       // Render right away with default, then try to fetch latest
       render(DEFAULT_DATA);
-      fetch(DATA_URL).then(r => r.ok && r.json().then(data => render(data))).catch(() => {});
+      fetch(DATA_URL + '?_t=' + Date.now(), { cache: 'no-store' }).then(r => r.ok && r.json().then(data => render(data))).catch(() => {});
   </script>
 </body>
 </html>
