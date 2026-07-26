@@ -89,7 +89,7 @@
     };
     const TEXT_ICONS = { threads: '@', x: 'X' };
 
-    const DATA_URL = window.location.hostname === 'pedromariacultura-lgtm.github.io' ? 'data.json' : 'https://raw.githubusercontent.com/pedromariacultura-lgtm/open.github.io/staging/data.json';
+    const DATA_URL = 'https://api.github.com/repos/pedromariacultura-lgtm/open.github.io/contents/data.json';
 
     const DEFAULT_DATA = {"tagline":"Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.","links":[{"label":"Edital OPEN Select Natal (Dez)","url":"https://forms.gle/rH6oTg8KGxFRfPjs7","platform":"edital","desc":"Inscreva-se no processo seletivo","featured":true},{"label":"Instagram","url":"https://instagram.com/open_designindependente","platform":"instagram","desc":"","featured":false},{"label":"TikTok","url":"https://tiktok.com/@open_designindependente","platform":"tiktok","desc":"","featured":false},{"label":"YouTube","url":"https://www.youtube.com/@open_designindependente","platform":"youtube","desc":"","featured":false},{"label":"Threads","url":"https://www.threads.com/@open_designindependente","platform":"threads","desc":"","featured":false},{"label":"X / Twitter","url":"https://x.com/opendesignindep","platform":"x","desc":"","featured":false},{"label":"Site Oficial","url":"https://www.opendesignindependente.com.br","platform":"website","desc":"","featured":false}]};
 
@@ -139,7 +139,11 @@
       });
       // Render right away with default, then try to fetch latest
       render(DEFAULT_DATA);
-      fetch(DATA_URL + '?_t=' + Date.now(), { cache: 'no-store' }).then(r => r.ok && r.json().then(data => render(data))).catch(() => {});
+      fetch(DATA_URL, { cache: 'no-store', headers: {'Accept': 'application/vnd.github.v3+json'} })
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(d => JSON.parse(atob(d.content.replace(/\s/g, ''))))
+        .then(data => render(data))
+        .catch(() => {});
   </script>
 </body>
 </html>
