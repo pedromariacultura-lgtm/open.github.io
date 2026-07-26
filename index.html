@@ -8,7 +8,7 @@
   <meta property="og:title" content="Links OPEN Design Independente">
   <meta property="og:description" content="Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#515D87">
+  <meta name="theme-color" content="#000000">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
@@ -126,6 +126,26 @@
     .link-card.edital:hover { border-color: #C3D940; }
     .link-card.edital:hover .brand-icon svg { color: #C3D940; }
 
+    /* Featured link animation */
+    @keyframes pulse-border {
+      0%, 100% { border-color: #C3D940; box-shadow: 0 0 0 0 rgba(195, 217, 64, 0.4); }
+      50% { border-color: #a8bf2f; box-shadow: 0 0 0 4px rgba(195, 217, 64, 0); }
+    }
+
+    .link-card.featured {
+      border-width: 2px;
+      animation: pulse-border 2.5s ease-in-out infinite;
+    }
+
+    .link-card.featured:hover {
+      animation: none;
+      border-color: #C3D940;
+      box-shadow: 0 4px 20px rgba(195, 217, 64, 0.25);
+    }
+
+    .link-card.featured .brand-icon svg { color: #C3D940; }
+    .link-card.featured .label { color: #000; }
+
     .footer { margin-top: 44px; font-size: 11px; color: #B0B0B0; text-align: center; }
     .footer a { color: #8F8F8F; text-decoration: none; }
     .footer a:hover { color: #000; }
@@ -138,7 +158,7 @@
     <p class="tagline">Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.</p>
     <div class="links">
 
-      <a href="https://forms.gle/rH6oTg8KGxFRfPjs7" target="_blank" rel="noopener noreferrer" class="link-card edital">
+      <a href="https://forms.gle/rH6oTg8KGxFRfPjs7" target="_blank" rel="noopener noreferrer" class="link-card edital featured">
         <span class="brand-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 2H8C6.9 2 6 2.9 6 4v16c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 2h4v2h-4V4zm4 16H8V4h2v2h4V4h2v16z"/><path d="M12 12l-3 3h2v4h2v-4h2l-3-3z"/></svg></span>
         <span class="card-content">
           <span class="label">Edital OPEN Select Natal (Dez)</span>
