@@ -126,7 +126,7 @@
     .link-card.edital:hover { border-color: #C3D940; }
     .link-card.edital:hover .brand-icon svg { color: #C3D940; }
 
-    /* Featured link animation - intense neon */
+    /* Featured link animation - intense neon + text pulse */
     @keyframes neon-pulse {
       0% {
         border-color: #C3D940;
@@ -135,7 +135,6 @@
           0 0 40px rgba(195, 217, 64, 0.3),
           0 0 80px rgba(195, 217, 64, 0.1);
         background: #FFFFFF;
-        transform: scale(1);
       }
       30% {
         border-color: #e6ff66;
@@ -160,13 +159,42 @@
           0 0 40px rgba(195, 217, 64, 0.3),
           0 0 80px rgba(195, 217, 64, 0.1);
         background: #FFFFFF;
-        transform: scale(1);
       }
+    }
+
+    @keyframes text-pulse {
+      0%, 100% {
+        transform: scale(1);
+        color: #000;
+      }
+      30% {
+        transform: scale(1.08);
+        color: #567000;
+      }
+      60% {
+        transform: scale(1.02);
+        color: #000;
+      }
+    }
+
+    @keyframes desc-pulse {
+      0%, 100% { opacity: 0.7; }
+      30% { opacity: 1; }
+      60% { opacity: 0.85; }
     }
 
     .link-card.featured {
       border-width: 2px;
       animation: neon-pulse 2.2s ease-in-out infinite;
+    }
+
+    .link-card.featured .label {
+      display: inline-block;
+      animation: text-pulse 2.2s ease-in-out infinite;
+    }
+
+    .link-card.featured .desc {
+      animation: desc-pulse 2.2s ease-in-out infinite;
     }
 
     .link-card.featured:hover {
@@ -178,6 +206,17 @@
         0 0 120px rgba(230, 255, 102, 0.25);
       background: #faffed;
       transform: scale(1.02);
+    }
+
+    .link-card.featured:hover .label {
+      animation: none;
+      transform: scale(1.08);
+      color: #567000;
+    }
+
+    .link-card.featured:hover .desc {
+      animation: none;
+      opacity: 1;
     }
 
     .link-card.featured .brand-icon svg { color: #C3D940; }
