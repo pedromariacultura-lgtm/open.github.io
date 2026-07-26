@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — OPEN Design Independente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,700;1,800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Montserrat', sans-serif; background: #E0E0E0; color: #454545; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 16px; }
+    .container { max-width: 720px; width: 100%; }
+    h1 { font-size: 22px; font-weight: 800; font-style: italic; color: #000; margin-bottom: 4px; }
+    .sub { font-size: 12px; color: #8F8F8F; margin-bottom: 28px; }
+    .card { background: #FFF; border: 1px solid #d4d4d4; border-radius: 2px; padding: 24px; margin-bottom: 20px; }
+    .card h2 { font-size: 14px; font-weight: 700; font-style: italic; margin-bottom: 16px; color: #000; }
+    label { display: block; font-size: 12px; font-weight: 600; color: #666; margin-bottom: 4px; }
+    input, textarea { width: 100%; padding: 10px 12px; border: 1px solid #d4d4d4; border-radius: 2px; font-family: 'Montserrat', sans-serif; font-size: 13px; color: #454545; margin-bottom: 14px; transition: border-color 0.2s; }
+    input:focus, textarea:focus { outline: none; border-color: #000; }
+    textarea { resize: vertical; min-height: 60px; }
+    .link-item { background: #f7f7f7; border: 1px solid #e0e0e0; border-radius: 2px; padding: 16px; margin-bottom: 12px; position: relative; }
+    .link-item .drag-handle { cursor: grab; color: #bbb; font-size: 18px; text-align: center; margin-bottom: 8px; user-select: none; }
+    .link-item .link-fields { display: grid; gap: 10px; }
+    .link-item .remove-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #C8C8C8; cursor: pointer; font-size: 18px; padding: 4px; }
+    .link-item .remove-btn:hover { color: #e00; }
+    .featured-toggle { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .featured-toggle input[type="checkbox"] { width: auto; margin: 0; }
+    .featured-toggle label { margin: 0; cursor: pointer; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: none; border-radius: 2px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; font-style: italic; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: #000; color: #fff; }
+    .btn-primary:hover { background: #333; }
+    .btn-secondary { background: #e0e0e0; color: #454545; }
+    .btn-secondary:hover { background: #ccc; }
+    .btn-success { background: #C3D940; color: #000; }
+    .btn-success:hover { background: #a8bf2f; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+    #login-section { text-align: center; padding: 60px 20px; }
+    #login-section .code-box { background: #f7f7f7; border: 2px dashed #d4d4d4; border-radius: 2px; padding: 20px; margin: 20px 0; font-size: 28px; font-weight: 700; letter-spacing: 4px; color: #000; font-family: monospace; }
+    .steps { text-align: left; font-size: 13px; line-height: 1.8; color: #666; margin-top: 16px; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 12px 24px; border-radius: 2px; font-size: 13px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
+    .toast.show { opacity: 1; }
+    .toast.error { background: #c00; }
+    .logged-user { font-size: 12px; color: #8F8F8F; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin</h1>
+    <p class="sub">Links OPEN Design Independente</p>
+
+    <div id="login-section" class="card">
+      <h2>Acesso ao Painel</h2>
+      <p style="font-size:13px;color:#888;margin-bottom:16px;">Fa&ccedil;a login com seu GitHub para editar o site.</p>
+      <button id="login-btn" class="btn btn-primary" onclick="startLogin()">Entrar com GitHub</button>
+      <div id="device-steps" style="display:none;">
+        <div class="code-box" id="device-code">------</div>
+        <p style="font-size:13px;color:#888;">Acesse <strong>github.com/login/device</strong> e insira o c&oacute;digo</p>
+        <div class="steps">1. Clique em "Entrar com GitHub"<br>2. Anote o c&oacute;digo<br>3. V&aacute; em github.com/login/device<br>4. Cole o c&oacute;digo e autorize<br>5. Volte a esta p&aacute;gina</div>
+      </div>
+    </div>
+
+    <div id="admin-section" style="display:none;">
+      <div class="logged-user">Logado como <strong id="username">---</strong> &mdash; altera&ccedil;&otilde;es viram commits</div>
+
+      <div class="card">
+        <h2>Descri&ccedil;&atilde;o Principal</h2>
+        <label for="tagline">Texto abaixo do t&iacute;tulo do site</label>
+        <textarea id="tagline" maxlength="300"></textarea>
+      </div>
+
+      <div class="card">
+        <h2>Links</h2>
+        <div id="links-container"></div>
+        <button class="btn btn-secondary add-link" onclick="addLink()">+ Adicionar Link</button>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-success" onclick="saveChanges()" id="save-btn">Salvar &amp; Publicar</button>
+        <button class="btn btn-secondary" onclick="logout()">Sair</button>
+      </div>
+      <p id="save-status" style="font-size:11px;color:#8f8f8f;margin-top:8px;"></p>
+    </div>
+  </div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const CLIENT_ID = 'Ov23liYTQO8mXXOTYU6n';
+    const OWNER = 'pedromariacultura-lgtm';
+    const REPO = 'open.github.io';
+    const DATA_PATH = 'data.json';
+    const API = 'https://api.github.com';
+    let token = null, currentSha = null, pollInterval = null;
+
+    async function startLogin() {
+      const btn = document.getElementById('login-btn');
+      btn.disabled = true; btn.textContent = 'Aguarde...';
+      try {
+        const r = await fetch('https://github.com/login/device/code', {
+          method: 'POST',
+          headers: { 'Accept':'application/json','Content-Type':'application/json' },
+          body: JSON.stringify({ client_id: CLIENT_ID, scope: 'repo' })
+        });
+        const d = await r.json();
+        document.getElementById('device-code').textContent = d.user_code;
+        document.getElementById('device-steps').style.display = 'block';
+        btn.style.display = 'none';
+        pollInterval = setInterval(async () => {
+          try {
+            const p = await fetch('https://github.com/login/oauth/access_token', {
+              method: 'POST',
+              headers: { 'Accept':'application/json','Content-Type':'application/json' },
+              body: JSON.stringify({ client_id: CLIENT_ID, device_code: d.device_code, grant_type: 'urn:ietf:params:oauth:grant-type:device_code' })
+            });
+            const t = await p.json();
+            if (t.access_token) { clearInterval(pollInterval); token = t.access_token; showToast('Autenticado!'); loadAdmin(); }
+            else if (t.error === 'expired_token' || t.error === 'access_denied') { clearInterval(pollInterval); showToast('C\u00f3digo expirado ou recusado.', 'error'); resetLogin(); }
+          } catch(e) {}
+        }, (d.interval || 5) * 1000);
+      } catch(e) { showToast('Erro: ' + e.message, 'error'); resetLogin(); }
+    }
+
+    function resetLogin() {
+      document.getElementById('device-steps').style.display = 'none';
+      const btn = document.getElementById('login-btn');
+      btn.disabled = false; btn.textContent = 'Entrar com GitHub'; btn.style.display = '';
+      if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+    }
+
+    function logout() { token = null; currentSha = null; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-section').style.display = 'none'; resetLogin(); }
+
+    async function loadAdmin() {
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('admin-section').style.display = 'block';
+      try { const u = await fetch(API+'/user',{headers:{'Authorization':'token '+token}}); const user = await u.json(); document.getElementById('username').textContent = user.login; } catch(e) {}
+      await fetchData();
+    }
+
+    async function fetchData() {
+      try {
+        const r = await fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/'+DATA_PATH,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
+        if (!r.ok) { currentSha = null; renderForm(getDefault()); return; }
+        const d = await r.json(); currentSha = d.sha; renderForm(JSON.parse(atob(d.content)));
+      } catch(e) { showToast('Erro: '+e.message,'error'); }
+    }
+
+    function getDefault() { return { tagline: 'Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.', links: [{ label: 'Instagram', url: 'https://instagram.com/open_designindependente', platform: 'instagram', desc: '', featured: false }, { label: 'TikTok', url: 'https://tiktok.com/@open_designindependente', platform: 'tiktok', desc: '', featured: false }] }; }
+
+    function renderForm(data) {
+      document.getElementById('tagline').value = data.tagline || '';
+      const c = document.getElementById('links-container'); c.innerHTML = '';
+      (data.links||[]).forEach((l,i) => c.appendChild(makeLink(l,i)));
+    }
+
+    function makeLink(link, idx) {
+      const d = document.createElement('div'); d.className = 'link-item';
+      d.innerHTML = '<button class="remove-btn" onclick="if(confirm(\'Remover?\'))this.closest(\'.link-item\').remove()">&times;</button>' +
+        '<div class="drag-handle">&#9776;</div><div class="link-fields">' +
+        '<div><label>Nome</label><input type="text" class="link-label" value="'+esc(link.label)+'" placeholder="Ex: Instagram"></div>' +
+        '<div><label>URL</label><input type="url" class="link-url" value="'+esc(link.url)+'" placeholder="https://..."></div>' +
+        '<div><label>Descri\u00e7\u00e3o</label><input type="text" class="link-desc" value="'+esc(link.desc||'')+'" placeholder="Opcional"></div>' +
+        '<div class="featured-toggle"><input type="checkbox" class="link-featured"'+(link.featured?' checked':'')+' id="feat-'+idx+'"><label for="feat-'+idx+'">Destacar com neon</label></div>' +
+        '</div>';
+      return d;
+    }
+
+    function esc(t) { if (!t) return ''; return String(t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function addLink() { document.getElementById('links-container').appendChild(makeLink({label:'',url:'',platform:'custom',desc:'',featured:false}, document.querySelectorAll('.link-item').length)); }
+
+    function collect() {
+      const tagline = document.getElementById('tagline').value.trim();
+      const links = Array.from(document.querySelectorAll('.link-item')).map(item => {
+        const label = item.querySelector('.link-label').value.trim()||'Link';
+        return { label, url: item.querySelector('.link-url').value.trim()||'#', platform: detect(label), desc: item.querySelector('.link-desc').value.trim(), featured: item.querySelector('.link-featured').checked };
+      });
+      return { tagline, links };
+    }
+
+    function detect(l) { const s=l.toLowerCase(); if(s.includes('instagram'))return 'instagram'; if(s.includes('tiktok'))return 'tiktok'; if(s.includes('youtube')||s.includes('youtu'))return 'youtube'; if(s.includes('threads'))return 'threads'; if(s.includes('x /')||s.includes('twitter')||s==='x')return 'x'; if(s.includes('site')||s.includes('oficial')||s.includes('website'))return 'website'; if(s.includes('edital')||s.includes('select')||s.includes('inscreva'))return 'edital'; return 'custom'; }
+
+    async function saveChanges() {
+      const btn = document.getElementById('save-btn'); btn.disabled=true; btn.textContent='Salvando...';
+      document.getElementById('save-status').textContent='';
+      try {
+        const data = collect();
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+        const body = { message: 'Admin: atualizar dados do site', content: content };
+        if (currentSha) body.sha = currentSha;
+        const r = await fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/'+DATA_PATH,{method:'PUT',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+        if (!r.ok) { const e=await r.json(); throw new Error(e.message||'Erro'); }
+        const res = await r.json(); currentSha = res.content.sha;
+        showToast('Publicado!');
+        document.getElementById('save-status').textContent='Commit '+res.commit.sha.substring(0,7)+' — site atualiza em ~2 min';
+      } catch(e) { showToast('Erro: '+e.message,'error'); }
+      btn.disabled=false; btn.textContent='Salvar & Publicar';
+    }
+
+    function showToast(m,t) { const o=document.getElementById('toast'); o.textContent=m; o.className='toast'+(t?' '+t:''); o.classList.add('show'); setTimeout(()=>o.classList.remove('show'),3500); }
+  </script>
+</body>
+</html>
