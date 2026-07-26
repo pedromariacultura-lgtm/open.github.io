@@ -126,39 +126,58 @@
     .link-card.edital:hover { border-color: #C3D940; }
     .link-card.edital:hover .brand-icon svg { color: #C3D940; }
 
-    /* Featured link animation - neon glow */
+    /* Featured link animation - intense neon */
     @keyframes neon-pulse {
-      0%, 100% {
+      0% {
         border-color: #C3D940;
         box-shadow:
-          0 0 5px rgba(195, 217, 64, 0.6),
-          0 0 20px rgba(195, 217, 64, 0.3),
-          0 0 40px rgba(195, 217, 64, 0.1);
+          0 0 10px rgba(195, 217, 64, 0.6),
+          0 0 40px rgba(195, 217, 64, 0.3),
+          0 0 80px rgba(195, 217, 64, 0.1);
         background: #FFFFFF;
+        transform: scale(1);
       }
-      50% {
-        border-color: #d4ff4d;
+      30% {
+        border-color: #e6ff66;
         box-shadow:
-          0 0 10px rgba(195, 217, 64, 0.9),
-          0 0 30px rgba(195, 217, 64, 0.5),
-          0 0 60px rgba(195, 217, 64, 0.2);
-        background: #f8ffe6;
+          0 0 20px rgba(230, 255, 102, 0.9),
+          0 0 60px rgba(230, 255, 102, 0.5),
+          0 0 100px rgba(230, 255, 102, 0.25);
+        background: #faffed;
+      }
+      60% {
+        border-color: #C3D940;
+        box-shadow:
+          0 0 15px rgba(195, 217, 64, 0.7),
+          0 0 50px rgba(195, 217, 64, 0.4),
+          0 0 90px rgba(195, 217, 64, 0.15);
+        background: #f5ffe0;
+      }
+      100% {
+        border-color: #C3D940;
+        box-shadow:
+          0 0 10px rgba(195, 217, 64, 0.6),
+          0 0 40px rgba(195, 217, 64, 0.3),
+          0 0 80px rgba(195, 217, 64, 0.1);
+        background: #FFFFFF;
+        transform: scale(1);
       }
     }
 
     .link-card.featured {
       border-width: 2px;
-      animation: neon-pulse 1.8s ease-in-out infinite;
+      animation: neon-pulse 2.2s ease-in-out infinite;
     }
 
     .link-card.featured:hover {
       animation: none;
-      border-color: #C3D940;
+      border-color: #e6ff66;
       box-shadow:
-        0 0 8px rgba(195, 217, 64, 0.7),
-        0 0 25px rgba(195, 217, 64, 0.4),
-        0 0 50px rgba(195, 217, 64, 0.15);
-      background: #f8ffe6;
+        0 0 25px rgba(230, 255, 102, 0.9),
+        0 0 60px rgba(230, 255, 102, 0.5),
+        0 0 120px rgba(230, 255, 102, 0.25);
+      background: #faffed;
+      transform: scale(1.02);
     }
 
     .link-card.featured .brand-icon svg { color: #C3D940; }
