@@ -94,7 +94,7 @@
 
     function connectToken() {
       token = document.getElementById('token-input').value.trim();
-      if (!token || !token.startsWith('github_pat')) { showToast('Token inv&aacute;lido. Deve come&ccedil;ar com github_pat', 'error'); return; }
+      if (!token || !token.startsWith('ghp_') && !token.startsWith('github_pat')) { showToast('Token inv&aacute;lido. Deve come&ccedil;ar com ghp_ ou github_pat', 'error'); return; }
       localStorage.setItem('gh_token', token);
       document.getElementById('token-input').value = '';
       document.getElementById('token-section').style.display = 'none';
@@ -109,9 +109,13 @@
     async function fetchData() {
       try {
         const r = await fetch(API+ '/repos/'+ OWNER+ '/'+ REPO+ '/contents/'+ DATA_PATH, { headers: { 'Authorization': 'token '+ token, 'Accept': 'application/vnd.github.v3+json' } });
-        if (!r.ok) { currentSha = null; renderForm(getDefault()); return; }
+        if (!r.ok) {
+          const e = await r.json().catch(() => ({}));
+          showToast('Erro '+ r.status + ': '+ (e.message || 'não foi possível carregar'), 'error');
+          currentSha = null; renderForm(getDefault()); return;
+        }
         const d = await r.json(); currentSha = d.sha; renderForm(JSON.parse(atob(d.content)));
-      } catch(e) { showToast('Erro: '+ e.message, 'error'); }
+      } catch(e) { showToast('Erro de rede: '+ e.message, 'error'); }
     }
 
     function getDefault() { return { tagline: 'Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.', links: [{ label: 'Instagram', url: 'https://instagram.com/open_designindependente', platform: 'instagram', desc: '', featured: false }, { label: 'TikTok', url: 'https://tiktok.com/@open_designindependente', platform: 'tiktok', desc: '', featured: false }] }; }
@@ -158,7 +162,10 @@
         const body = { message: 'Admin: atualizar dados do site', content: content };
         if (currentSha) body.sha = currentSha;
         const r = await fetch(API+ '/repos/'+ OWNER+ '/'+ REPO+ '/contents/'+ DATA_PATH, { method: 'PUT', headers: { 'Authorization': 'token '+ token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        if (!r.ok) { const e=await r.json(); throw new Error(e.message||'Erro'); }
+        if (!r.ok) {
+          const e = await r.json().catch(() => ({}));
+          throw new Error(r.status + ' ' + (e.message || 'n\u00e3o foi poss\u00edvel salvar'));
+        }
         const res = await r.json(); currentSha = res.content.sha;
         showToast('Publicado!');
         document.getElementById('save-status').textContent='Commit '+ res.commit.sha.substring(0,7)+' — site atualiza em ~2 min';
