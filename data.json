@@ -49,6 +49,13 @@
       "desc": "",
       "platform": "website",
       "featured": false
+    },
+    {
+      "label": "Site Design Week POA",
+      "url": "https://www.designweekpoa.com",
+      "desc": "",
+      "platform": "website",
+      "featured": false
     }
   ]
 }
