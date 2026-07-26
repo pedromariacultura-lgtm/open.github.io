@@ -35,11 +35,11 @@
     .btn-success:hover { background: #a8bf2f; }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-    .code-inline { background: #f0f0f0; padding: 2px 6px; border-radius: 2px; font-size: 12px; font-family: monospace; }
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 12px 24px; border-radius: 2px; font-size: 13px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
     .toast.show { opacity: 1; }
     .toast.error { background: #c00; }
     .logged-user { font-size: 12px; color: #8F8F8F; margin-bottom: 20px; }
+    .hint { font-size: 12px; color: #888; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -47,27 +47,16 @@
     <h1>Admin</h1>
     <p class="sub">Links OPEN Design Independente</p>
 
-    <div id="token-section" class="card">
-      <h2>Token de Acesso</h2>
-      <p style="font-size:13px;color:#888;margin-bottom:16px;">
-        Crie um <strong>Personal Access Token</strong> no GitHub com acesso ao reposit&oacute;rio.
-      </p>
-      <ol style="font-size:12px;color:#666;line-height:2;margin-bottom:16px;padding-left:20px;">
-        <li>V&aacute; em <strong>github.com/settings/tokens</strong></li>
-        <li>Clique em <strong>Generate new token</strong> &rarr; <strong>Fine-grained token</strong></li>
-        <li>Nome: <span class="code-inline">OPEN Admin</span></li>
-        <li>Expira&ccedil;&atilde;o: escolha um prazo</li>
-        <li>Repository access: <strong>Only select repositories</strong> &rarr; escolha <span class="code-inline">open.github.io</span></li>
-        <li>Permissions &rarr; Contents: <strong>Read and Write</strong></li>
-        <li>Clique em <strong>Generate token</strong> e copie o token gerado</li>
-      </ol>
-      <label for="token-input">Cole seu token do GitHub</label>
-      <input type="password" id="token-input" placeholder="github_pat_...">
-      <button class="btn btn-primary" onclick="connectToken()">Conectar</button>
+    <div id="login-section" class="card">
+      <h2>Acesso Restrito</h2>
+      <label for="password-input">Senha de admin</label>
+      <input type="password" id="password-input" placeholder="Digite a senha...">
+      <button class="btn btn-primary" onclick="login()">Entrar</button>
+      <p class="hint" style="margin-top:12px;">Ap&oacute;s 10 tentativas erradas, o IP &eacute; bloqueado por 1 hora.</p>
     </div>
 
     <div id="admin-section" style="display:none;">
-      <div class="logged-user">Token ativo &mdash; altera&ccedil;&otilde;es viram commits no reposit&oacute;rio</div>
+      <div class="logged-user">Acesso autorizado &mdash; altera&ccedil;&otilde;es viram commits no reposit&oacute;rio</div>
       <div class="card">
         <h2>Descri&ccedil;&atilde;o Principal</h2>
         <label for="tagline">Texto abaixo do t&iacute;tulo do site</label>
@@ -80,45 +69,53 @@
       </div>
       <div class="actions">
         <button class="btn btn-success" onclick="saveChanges()" id="save-btn">Salvar &amp; Publicar</button>
-        <button class="btn btn-secondary" onclick="disconnect()">Desconectar</button>
+        <button class="btn btn-secondary" onclick="logout()">Sair</button>
       </div>
       <p id="save-status" style="font-size:11px;color:#8f8f8f;margin-top:8px;"></p>
     </div>
   </div>
   <div id="toast" class="toast"></div>
   <script>
-    const OWNER = 'pedromariacultura-lgtm', REPO = 'open.github.io', DATA_PATH = 'data.json', API = 'https://api.github.com';
-    let token = localStorage.getItem('gh_token') || null, currentSha = null;
+    // Substitua pela URL do seu Cloudflare Worker
+    const WORKER_URL = 'https://open-admin.seu-subdominio.workers.dev/api/update';
 
-    if (token) { document.getElementById('token-section').style.display = 'none'; document.getElementById('admin-section').style.display = 'block'; loadAdmin(); }
+    const DATA_URL = 'https://raw.githubusercontent.com/pedromariacultura-lgtm/open.github.io/main/data.json';
+    let password = sessionStorage.getItem('admin_pwd') || null;
+    let currentData = null;
 
-    function connectToken() {
-      token = document.getElementById('token-input').value.trim();
-      if (!token || !token.startsWith('ghp_') && !token.startsWith('github_pat')) { showToast('Token inv&aacute;lido. Deve come&ccedil;ar com ghp_ ou github_pat', 'error'); return; }
-      localStorage.setItem('gh_token', token);
-      document.getElementById('token-input').value = '';
-      document.getElementById('token-section').style.display = 'none';
+    if (password) { showAdmin(); loadData(); }
+
+    function login() {
+      password = document.getElementById('password-input').value;
+      if (!password) { showToast('Digite a senha', 'error'); return; }
+      sessionStorage.setItem('admin_pwd', password);
+      showAdmin();
+      loadData();
+    }
+
+    function logout() {
+      password = null;
+      sessionStorage.removeItem('admin_pwd');
+      document.getElementById('admin-section').style.display = 'none';
+      document.getElementById('login-section').style.display = 'block';
+      document.getElementById('password-input').value = '';
+    }
+
+    function showAdmin() {
+      document.getElementById('login-section').style.display = 'none';
       document.getElementById('admin-section').style.display = 'block';
-      loadAdmin();
     }
 
-    function disconnect() { localStorage.removeItem('gh_token'); token = null; currentSha = null; document.getElementById('admin-section').style.display = 'none'; document.getElementById('token-section').style.display = 'block'; showToast('Desconectado'); }
-
-    async function loadAdmin() { await fetchData(); }
-
-    async function fetchData() {
+    async function loadData() {
       try {
-        const r = await fetch(API+ '/repos/'+ OWNER+ '/'+ REPO+ '/contents/'+ DATA_PATH, { headers: { 'Authorization': 'token '+ token, 'Accept': 'application/vnd.github.v3+json' } });
-        if (!r.ok) {
-          const e = await r.json().catch(() => ({}));
-          showToast('Erro '+ r.status + ': '+ (e.message || 'não foi possível carregar'), 'error');
-          currentSha = null; renderForm(getDefault()); return;
-        }
-        const d = await r.json(); currentSha = d.sha; renderForm(JSON.parse(atob(d.content)));
-      } catch(e) { showToast('Erro de rede: '+ e.message, 'error'); }
+        const r = await fetch(DATA_URL, { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP '+r.status);
+        currentData = await r.json();
+        renderForm(currentData);
+      } catch(e) {
+        showToast('Erro ao carregar dados: '+e.message, 'error');
+      }
     }
-
-    function getDefault() { return { tagline: 'Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.', links: [{ label: 'Instagram', url: 'https://instagram.com/open_designindependente', platform: 'instagram', desc: '', featured: false }, { label: 'TikTok', url: 'https://tiktok.com/@open_designindependente', platform: 'tiktok', desc: '', featured: false }] }; }
 
     function renderForm(data) {
       document.getElementById('tagline').value = data.tagline || '';
@@ -158,18 +155,18 @@
       document.getElementById('save-status').textContent='';
       try {
         const data = collect();
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
-        const body = { message: 'Admin: atualizar dados do site', content: content };
-        if (currentSha) body.sha = currentSha;
-        const r = await fetch(API+ '/repos/'+ OWNER+ '/'+ REPO+ '/contents/'+ DATA_PATH, { method: 'PUT', headers: { 'Authorization': 'token '+ token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        if (!r.ok) {
-          const e = await r.json().catch(() => ({}));
-          throw new Error(r.status + ' ' + (e.message || 'n\u00e3o foi poss\u00edvel salvar'));
-        }
-        const res = await r.json(); currentSha = res.content.sha;
+        const r = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password, data })
+        });
+        const result = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(result.error || 'HTTP '+r.status);
         showToast('Publicado!');
-        document.getElementById('save-status').textContent='Commit '+ res.commit.sha.substring(0,7)+' — site atualiza em ~2 min';
-      } catch(e) { showToast('Erro: '+e.message,'error'); }
+        document.getElementById('save-status').textContent='Commit '+result.commit+' — site atualiza em ~2 min';
+      } catch(e) {
+        showToast('Erro: '+e.message, 'error');
+      }
       btn.disabled=false; btn.textContent='Salvar & Publicar';
     }
 
