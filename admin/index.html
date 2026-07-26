@@ -41,6 +41,7 @@
     .toast.error { background: #c00; }
     .logged-user { font-size: 12px; color: #8F8F8F; margin-bottom: 20px; }
     .hint { font-size: 12px; color: #888; line-height: 1.6; }
+    .session-info { font-size: 11px; color: #8F8F8F; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -52,12 +53,12 @@
       <h2>Acesso Restrito</h2>
       <label for="password-input">Senha de admin</label>
       <input type="password" id="password-input" placeholder="Digite a senha...">
-      <button class="btn btn-primary" onclick="login()">Entrar</button>
+      <button class="btn btn-primary" onclick="login()" id="login-btn">Entrar</button>
       <p class="hint" style="margin-top:12px;">Ap&oacute;s 10 tentativas erradas, o IP &eacute; bloqueado por 1 hora.</p>
     </div>
 
     <div id="admin-section" style="display:none;">
-      <div class="logged-user">Acesso autorizado &mdash; altera&ccedil;&otilde;es viram commits no reposit&oacute;rio</div>
+      <div class="logged-user">Sess&atilde;o ativa &mdash; altera&ccedil;&otilde;es viram commits no reposit&oacute;rio</div>
       <div class="card">
         <h2>Descri&ccedil;&atilde;o Principal</h2>
         <label for="tagline">Texto abaixo do t&iacute;tulo do site</label>
@@ -77,29 +78,54 @@
   </div>
   <div id="toast" class="toast"></div>
   <script>
-    // Substitua pela URL do seu Cloudflare Worker
-    const WORKER_URL = 'https://open-admin.camila-9a7.workers.dev/api/update';
-
+    const WORKER_URL = 'https://open-admin.camila-9a7.workers.dev';
     const DATA_URL = 'https://raw.githubusercontent.com/pedromariacultura-lgtm/open.github.io/main/data.json';
-    let password = sessionStorage.getItem('admin_pwd') || null;
-    let currentData = null;
+    let sessionToken = sessionStorage.getItem('admin_session') || null;
 
-    if (password) { showAdmin(); loadData(); }
+    if (sessionToken) { showAdmin(); loadData(); }
 
-    function login() {
-      password = document.getElementById('password-input').value;
-      if (!password) { showToast('Digite a senha', 'error'); return; }
-      sessionStorage.setItem('admin_pwd', password);
-      showAdmin();
-      loadData();
+    async function login() {
+      const btn = document.getElementById('login-btn');
+      btn.disabled = true; btn.textContent = 'Verificando...';
+      const password = document.getElementById('password-input').value;
+      if (!password) { showToast('Digite a senha', 'error'); btn.disabled = false; btn.textContent = 'Entrar'; return; }
+
+      try {
+        const r = await fetch(WORKER_URL + '/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: password })
+        });
+        const result = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          throw new Error(result.error || 'HTTP ' + r.status);
+        }
+        sessionToken = result.token;
+        sessionStorage.setItem('admin_session', sessionToken);
+        showAdmin();
+        loadData();
+        showToast('Login realizado!');
+      } catch(e) {
+        showToast('Erro: ' + e.message, 'error');
+      }
+      btn.disabled = false; btn.textContent = 'Entrar';
     }
 
-    function logout() {
-      password = null;
-      sessionStorage.removeItem('admin_pwd');
+    async function logout() {
+      if (sessionToken) {
+        try {
+          await fetch(WORKER_URL + '/api/logout', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + sessionToken }
+          });
+        } catch(e) {}
+      }
+      sessionToken = null;
+      sessionStorage.removeItem('admin_session');
       document.getElementById('admin-section').style.display = 'none';
       document.getElementById('login-section').style.display = 'block';
       document.getElementById('password-input').value = '';
+      showToast('Desconectado');
     }
 
     function showAdmin() {
@@ -110,47 +136,45 @@
     async function loadData() {
       try {
         const r = await fetch(DATA_URL, { cache: 'no-store' });
-        if (!r.ok) throw new Error('HTTP '+r.status);
-        currentData = await r.json();
-        renderForm(currentData);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        renderForm(data);
       } catch(e) {
-        showToast('Erro ao carregar dados: '+e.message, 'error');
+        showToast('Erro ao carregar dados: ' + e.message, 'error');
       }
     }
 
     function renderForm(data) {
       document.getElementById('tagline').value = data.tagline || '';
       const c = document.getElementById('links-container'); c.innerHTML = '';
-      (data.links||[]).forEach((l,i) => c.appendChild(makeLink(l,i)));
+      (data.links || []).forEach((l, i) => c.appendChild(makeLink(l, i)));
     }
 
     function makeLink(link, idx) {
       const d = document.createElement('div'); d.className = 'link-item';
       d.innerHTML = '<button class="remove-btn" onclick="if(confirm(\'Remover?\'))this.closest(\'.link-item\').remove()">&times;</button>' +
         '<div class="link-fields">' +
-        '<div><label>Nome</label><input type="text" class="link-label" value="'+esc(link.label)+'" placeholder="Ex: Instagram"></div>' +
-        '<div><label>URL</label><input type="url" class="link-url" value="'+esc(link.url)+'" placeholder="https://..."></div>' +
-        '<div><label>Descri\u00e7\u00e3o</label><input type="text" class="link-desc" value="'+esc(link.desc||'')+'" placeholder="Opcional"></div>' +
-        '<div class="featured-toggle"><input type="checkbox" class="link-featured"'+(link.featured?' checked':'')+' id="feat-'+idx+'"><label for="feat-'+idx+'">Destacar com neon</label></div>' +
+        '<div><label>Nome</label><input type="text" class="link-label" value="' + esc(link.label) + '" placeholder="Ex: Instagram"></div>' +
+        '<div><label>URL</label><input type="url" class="link-url" value="' + esc(link.url) + '" placeholder="https://..."></div>' +
+        '<div><label>Descri\u00e7\u00e3o</label><input type="text" class="link-desc" value="' + esc(link.desc || '') + '" placeholder="Opcional"></div>' +
+        '<div class="featured-toggle"><input type="checkbox" class="link-featured"' + (link.featured ? ' checked' : '') + ' id="feat-' + idx + '"><label for="feat-' + idx + '">Destacar com neon</label></div>' +
         '</div>';
       return d;
     }
 
-    function esc(t) { if (!t) return ''; return String(t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function esc(t) { if (!t) return ''; return String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-    function addLink() { document.getElementById('links-container').appendChild(makeLink({label:'',url:'',platform:'custom',desc:'',featured:false}, document.querySelectorAll('.link-item').length)); }
+    function addLink() { document.getElementById('links-container').appendChild(makeLink({ label: '', url: '', platform: 'custom', desc: '', featured: false }, document.querySelectorAll('.link-item').length)); }
 
     function collect() {
       const tagline = document.getElementById('tagline').value.trim();
       const links = Array.from(document.querySelectorAll('.link-item')).map((item, i) => {
         const label = item.querySelector('.link-label').value.trim() || 'Link';
         let url = item.querySelector('.link-url').value.trim() || '#';
-        // Client-side URL validation: block dangerous protocols
         const dangerous = /^\s*(javascript|data|vbscript):/i;
         if (dangerous.test(url)) {
           throw new Error('Link ' + (i + 1) + ': URLs com javascript:/data:/vbscript: não são permitidas');
         }
-        // Ensure URL has a protocol
         if (url !== '#' && !/^https?:\/\//i.test(url)) {
           url = 'https://' + url;
         }
@@ -159,29 +183,35 @@
       return { tagline, links };
     }
 
-    function detect(l) { const s=l.toLowerCase(); if(s.includes('instagram'))return 'instagram'; if(s.includes('tiktok'))return 'tiktok'; if(s.includes('youtube')||s.includes('youtu'))return 'youtube'; if(s.includes('threads'))return 'threads'; if(s.includes('x /')||s.includes('twitter')||s==='x')return 'x'; if(s.includes('site')||s.includes('oficial')||s.includes('website'))return 'website'; if(s.includes('edital')||s.includes('select')||s.includes('inscreva'))return 'edital'; return 'custom'; }
+    function detect(l) { const s = l.toLowerCase(); if (s.includes('instagram')) return 'instagram'; if (s.includes('tiktok')) return 'tiktok'; if (s.includes('youtube') || s.includes('youtu')) return 'youtube'; if (s.includes('threads')) return 'threads'; if (s.includes('x /') || s.includes('twitter') || s === 'x') return 'x'; if (s.includes('site') || s.includes('oficial') || s.includes('website')) return 'website'; if (s.includes('edital') || s.includes('select') || s.includes('inscreva')) return 'edital'; return 'custom'; }
 
     async function saveChanges() {
-      const btn = document.getElementById('save-btn'); btn.disabled=true; btn.textContent='Salvando...';
-      document.getElementById('save-status').textContent='';
+      const btn = document.getElementById('save-btn'); btn.disabled = true; btn.textContent = 'Salvando...';
+      document.getElementById('save-status').textContent = '';
       try {
         const data = collect();
-        const r = await fetch(WORKER_URL, {
+        const r = await fetch(WORKER_URL + '/api/update', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password, data })
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + sessionToken
+          },
+          body: JSON.stringify({ data: data })
         });
         const result = await r.json().catch(() => ({}));
-        if (!r.ok) throw new Error(result.error || 'HTTP '+r.status);
+        if (!r.ok) {
+          if (r.status === 401) { logout(); throw new Error('Sessão expirada. Faça login novamente.'); }
+          throw new Error(result.error || 'HTTP ' + r.status);
+        }
         showToast('Publicado!');
-        document.getElementById('save-status').textContent='Commit '+result.commit+' — site atualiza em ~2 min';
+        document.getElementById('save-status').textContent = 'Commit ' + result.commit + ' — site atualiza em segundos';
       } catch(e) {
-        showToast('Erro: '+e.message, 'error');
+        showToast('Erro: ' + e.message, 'error');
       }
-      btn.disabled=false; btn.textContent='Salvar & Publicar';
+      btn.disabled = false; btn.textContent = 'Salvar & Publicar';
     }
 
-    function showToast(m,t) { const o=document.getElementById('toast'); o.textContent=m; o.className='toast'+(t?' '+t:''); o.classList.add('show'); setTimeout(()=>o.classList.remove('show'),4000); }
+    function showToast(m, t) { const o = document.getElementById('toast'); o.textContent = m; o.className = 'toast' + (t ? ' ' + t : ''); o.classList.add('show'); setTimeout(() => o.classList.remove('show'), 4000); }
   </script>
 </body>
 </html>
