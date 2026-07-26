@@ -6,14 +6,14 @@
       "url": "https://forms.gle/rH6oTg8KGxFRfPjs7",
       "desc": "Inscreva-se no processo seletivo",
       "platform": "edital",
-      "featured": true
+      "featured": false
     },
     {
       "label": "Instagram",
       "url": "https://instagram.com/open_designindependente",
       "desc": "",
       "platform": "instagram",
-      "featured": false
+      "featured": true
     },
     {
       "label": "TikTok",
