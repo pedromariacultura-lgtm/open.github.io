@@ -91,10 +91,10 @@
 
     const DATA_URL = window.location.hostname === 'pedromariacultura-lgtm.github.io' ? 'data.json' : 'https://raw.githubusercontent.com/pedromariacultura-lgtm/open.github.io/staging/data.json';
 
-    fetch(DATA_URL)
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(data => {
-        document.getElementById('tagline').textContent = data.tagline || '';
+    const DEFAULT_DATA = {"tagline":"Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.","links":[{"label":"Edital OPEN Select Natal (Dez)","url":"https://forms.gle/rH6oTg8KGxFRfPjs7","platform":"edital","desc":"Inscreva-se no processo seletivo","featured":true},{"label":"Instagram","url":"https://instagram.com/open_designindependente","platform":"instagram","desc":"","featured":false},{"label":"TikTok","url":"https://tiktok.com/@open_designindependente","platform":"tiktok","desc":"","featured":false},{"label":"YouTube","url":"https://www.youtube.com/@open_designindependente","platform":"youtube","desc":"","featured":false},{"label":"Threads","url":"https://www.threads.com/@open_designindependente","platform":"threads","desc":"","featured":false},{"label":"X / Twitter","url":"https://x.com/opendesignindep","platform":"x","desc":"","featured":false},{"label":"Site Oficial","url":"https://www.opendesignindependente.com.br","platform":"website","desc":"","featured":false}]};
+
+    function render(data) {
+      document.getElementById('tagline').textContent = data.tagline || '';
         const container = document.getElementById('links-container');
         (data.links || []).forEach(link => {
           const card = document.createElement('a');
@@ -136,10 +136,10 @@
 
           container.appendChild(card);
         });
-      })
-      .catch(() => {
-        document.getElementById('tagline').textContent = 'Carregando...';
       });
+      // Render right away with default, then try to fetch latest
+      render(DEFAULT_DATA);
+      fetch(DATA_URL).then(r => r.ok && r.json().then(data => render(data))).catch(() => {});
   </script>
 </body>
 </html>
