@@ -20,9 +20,8 @@
     input:focus, textarea:focus { outline: none; border-color: #000; }
     textarea { resize: vertical; min-height: 60px; }
     .link-item { background: #f7f7f7; border: 1px solid #e0e0e0; border-radius: 2px; padding: 16px; margin-bottom: 12px; position: relative; }
-    .link-item .drag-handle { cursor: grab; color: #bbb; font-size: 18px; text-align: center; margin-bottom: 8px; user-select: none; }
     .link-item .link-fields { display: grid; gap: 10px; }
-    .link-item .remove-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #C8C8C8; cursor: pointer; font-size: 18px; padding: 4px; }
+    .link-item .remove-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #C8C8C8; cursor: pointer; font-size: 18px; }
     .link-item .remove-btn:hover { color: #e00; }
     .featured-toggle { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
     .featured-toggle input[type="checkbox"] { width: auto; margin: 0; }
@@ -36,9 +35,7 @@
     .btn-success:hover { background: #a8bf2f; }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-    #login-section { text-align: center; padding: 60px 20px; }
-    #login-section .code-box { background: #f7f7f7; border: 2px dashed #d4d4d4; border-radius: 2px; padding: 20px; margin: 20px 0; font-size: 28px; font-weight: 700; letter-spacing: 4px; color: #000; font-family: monospace; }
-    .steps { text-align: left; font-size: 13px; line-height: 1.8; color: #666; margin-top: 16px; }
+    .code-inline { background: #f0f0f0; padding: 2px 6px; border-radius: 2px; font-size: 12px; font-family: monospace; }
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 12px 24px; border-radius: 2px; font-size: 13px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
     .toast.show { opacity: 1; }
     .toast.error { background: #c00; }
@@ -50,99 +47,71 @@
     <h1>Admin</h1>
     <p class="sub">Links OPEN Design Independente</p>
 
-    <div id="login-section" class="card">
-      <h2>Acesso ao Painel</h2>
-      <p style="font-size:13px;color:#888;margin-bottom:16px;">Fa&ccedil;a login com seu GitHub para editar o site.</p>
-      <button id="login-btn" class="btn btn-primary" onclick="startLogin()">Entrar com GitHub</button>
-      <div id="device-steps" style="display:none;">
-        <div class="code-box" id="device-code">------</div>
-        <p style="font-size:13px;color:#888;">Acesse <strong>github.com/login/device</strong> e insira o c&oacute;digo</p>
-        <div class="steps">1. Clique em "Entrar com GitHub"<br>2. Anote o c&oacute;digo<br>3. V&aacute; em github.com/login/device<br>4. Cole o c&oacute;digo e autorize<br>5. Volte a esta p&aacute;gina</div>
-      </div>
+    <div id="token-section" class="card">
+      <h2>Token de Acesso</h2>
+      <p style="font-size:13px;color:#888;margin-bottom:16px;">
+        Crie um <strong>Personal Access Token</strong> no GitHub com acesso ao reposit&oacute;rio.
+      </p>
+      <ol style="font-size:12px;color:#666;line-height:2;margin-bottom:16px;padding-left:20px;">
+        <li>V&aacute; em <strong>github.com/settings/tokens</strong></li>
+        <li>Clique em <strong>Generate new token</strong> &rarr; <strong>Fine-grained token</strong></li>
+        <li>Nome: <span class="code-inline">OPEN Admin</span></li>
+        <li>Expira&ccedil;&atilde;o: escolha um prazo</li>
+        <li>Repository access: <strong>Only select repositories</strong> &rarr; escolha <span class="code-inline">open.github.io</span></li>
+        <li>Permissions &rarr; Contents: <strong>Read and Write</strong></li>
+        <li>Clique em <strong>Generate token</strong> e copie o token gerado</li>
+      </ol>
+      <label for="token-input">Cole seu token do GitHub</label>
+      <input type="password" id="token-input" placeholder="github_pat_...">
+      <button class="btn btn-primary" onclick="connectToken()">Conectar</button>
     </div>
 
     <div id="admin-section" style="display:none;">
-      <div class="logged-user">Logado como <strong id="username">---</strong> &mdash; altera&ccedil;&otilde;es viram commits</div>
-
+      <div class="logged-user">Token ativo &mdash; altera&ccedil;&otilde;es viram commits no reposit&oacute;rio</div>
       <div class="card">
         <h2>Descri&ccedil;&atilde;o Principal</h2>
         <label for="tagline">Texto abaixo do t&iacute;tulo do site</label>
         <textarea id="tagline" maxlength="300"></textarea>
       </div>
-
       <div class="card">
         <h2>Links</h2>
         <div id="links-container"></div>
-        <button class="btn btn-secondary add-link" onclick="addLink()">+ Adicionar Link</button>
+        <button class="btn btn-secondary" onclick="addLink()">+ Adicionar Link</button>
       </div>
-
       <div class="actions">
         <button class="btn btn-success" onclick="saveChanges()" id="save-btn">Salvar &amp; Publicar</button>
-        <button class="btn btn-secondary" onclick="logout()">Sair</button>
+        <button class="btn btn-secondary" onclick="disconnect()">Desconectar</button>
       </div>
       <p id="save-status" style="font-size:11px;color:#8f8f8f;margin-top:8px;"></p>
     </div>
   </div>
   <div id="toast" class="toast"></div>
-
   <script>
-    const CLIENT_ID = 'Ov23liYTQO8mXXOTYU6n';
-    const OWNER = 'pedromariacultura-lgtm';
-    const REPO = 'open.github.io';
-    const DATA_PATH = 'data.json';
-    const API = 'https://api.github.com';
-    let token = null, currentSha = null, pollInterval = null;
+    const OWNER = 'pedromariacultura-lgtm', REPO = 'open.github.io', DATA_PATH = 'data.json', API = 'https://api.github.com';
+    let token = localStorage.getItem('gh_token') || null, currentSha = null;
 
-    async function startLogin() {
-      const btn = document.getElementById('login-btn');
-      btn.disabled = true; btn.textContent = 'Aguarde...';
-      try {
-        const r = await fetch('https://github.com/login/device/code', {
-          method: 'POST',
-          headers: { 'Accept':'application/json','Content-Type':'application/json' },
-          body: JSON.stringify({ client_id: CLIENT_ID, scope: 'repo' })
-        });
-        const d = await r.json();
-        document.getElementById('device-code').textContent = d.user_code;
-        document.getElementById('device-steps').style.display = 'block';
-        btn.style.display = 'none';
-        pollInterval = setInterval(async () => {
-          try {
-            const p = await fetch('https://github.com/login/oauth/access_token', {
-              method: 'POST',
-              headers: { 'Accept':'application/json','Content-Type':'application/json' },
-              body: JSON.stringify({ client_id: CLIENT_ID, device_code: d.device_code, grant_type: 'urn:ietf:params:oauth:grant-type:device_code' })
-            });
-            const t = await p.json();
-            if (t.access_token) { clearInterval(pollInterval); token = t.access_token; showToast('Autenticado!'); loadAdmin(); }
-            else if (t.error === 'expired_token' || t.error === 'access_denied') { clearInterval(pollInterval); showToast('C\u00f3digo expirado ou recusado.', 'error'); resetLogin(); }
-          } catch(e) {}
-        }, (d.interval || 5) * 1000);
-      } catch(e) { showToast('Erro: ' + e.message, 'error'); resetLogin(); }
-    }
+    if (token) { document.getElementById('token-section').style.display = 'none'; document.getElementById('admin-section').style.display = 'block'; loadAdmin(); }
 
-    function resetLogin() {
-      document.getElementById('device-steps').style.display = 'none';
-      const btn = document.getElementById('login-btn');
-      btn.disabled = false; btn.textContent = 'Entrar com GitHub'; btn.style.display = '';
-      if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
-    }
-
-    function logout() { token = null; currentSha = null; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-section').style.display = 'none'; resetLogin(); }
-
-    async function loadAdmin() {
-      document.getElementById('login-section').style.display = 'none';
+    function connectToken() {
+      token = document.getElementById('token-input').value.trim();
+      if (!token || !token.startsWith('github_pat')) { showToast('Token inv&aacute;lido. Deve come&ccedil;ar com github_pat', 'error'); return; }
+      localStorage.setItem('gh_token', token);
+      document.getElementById('token-input').value = '';
+      document.getElementById('token-section').style.display = 'none';
       document.getElementById('admin-section').style.display = 'block';
-      try { const u = await fetch(API+'/user',{headers:{'Authorization':'token '+token}}); const user = await u.json(); document.getElementById('username').textContent = user.login; } catch(e) {}
-      await fetchData();
+      loadAdmin();
     }
+
+    function disconnect() { localStorage.removeItem('gh_token'); token = null; currentSha = null; document.getElementById('admin-section').style.display = 'none'; document.getElementById('token-section').style.display = 'block'; showToast('Desconectado'); }
+
+    async function loadAdmin() { await fetchData(); }
 
     async function fetchData() {
       try {
-        const r = await fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/'+DATA_PATH,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
+        const r = await fetch(API+ '/repos/'+ OWNER+ '/'+ REPO+ '/contents/'+ DATA_PATH, { headers: { 'Authorization': 'token '+ token, 'Accept': 'application/vnd.github.v3+json' } });
         if (!r.ok) { currentSha = null; renderForm(getDefault()); return; }
         const d = await r.json(); currentSha = d.sha; renderForm(JSON.parse(atob(d.content)));
-      } catch(e) { showToast('Erro: '+e.message,'error'); }
+      } catch(e) { showToast('Erro: '+ e.message, 'error'); }
     }
 
     function getDefault() { return { tagline: 'Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.', links: [{ label: 'Instagram', url: 'https://instagram.com/open_designindependente', platform: 'instagram', desc: '', featured: false }, { label: 'TikTok', url: 'https://tiktok.com/@open_designindependente', platform: 'tiktok', desc: '', featured: false }] }; }
@@ -156,7 +125,7 @@
     function makeLink(link, idx) {
       const d = document.createElement('div'); d.className = 'link-item';
       d.innerHTML = '<button class="remove-btn" onclick="if(confirm(\'Remover?\'))this.closest(\'.link-item\').remove()">&times;</button>' +
-        '<div class="drag-handle">&#9776;</div><div class="link-fields">' +
+        '<div class="link-fields">' +
         '<div><label>Nome</label><input type="text" class="link-label" value="'+esc(link.label)+'" placeholder="Ex: Instagram"></div>' +
         '<div><label>URL</label><input type="url" class="link-url" value="'+esc(link.url)+'" placeholder="https://..."></div>' +
         '<div><label>Descri\u00e7\u00e3o</label><input type="text" class="link-desc" value="'+esc(link.desc||'')+'" placeholder="Opcional"></div>' +
@@ -188,16 +157,16 @@
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
         const body = { message: 'Admin: atualizar dados do site', content: content };
         if (currentSha) body.sha = currentSha;
-        const r = await fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/'+DATA_PATH,{method:'PUT',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+        const r = await fetch(API+ '/repos/'+ OWNER+ '/'+ REPO+ '/contents/'+ DATA_PATH, { method: 'PUT', headers: { 'Authorization': 'token '+ token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
         if (!r.ok) { const e=await r.json(); throw new Error(e.message||'Erro'); }
         const res = await r.json(); currentSha = res.content.sha;
         showToast('Publicado!');
-        document.getElementById('save-status').textContent='Commit '+res.commit.sha.substring(0,7)+' — site atualiza em ~2 min';
+        document.getElementById('save-status').textContent='Commit '+ res.commit.sha.substring(0,7)+' — site atualiza em ~2 min';
       } catch(e) { showToast('Erro: '+e.message,'error'); }
       btn.disabled=false; btn.textContent='Salvar & Publicar';
     }
 
-    function showToast(m,t) { const o=document.getElementById('toast'); o.textContent=m; o.className='toast'+(t?' '+t:''); o.classList.add('show'); setTimeout(()=>o.classList.remove('show'),3500); }
+    function showToast(m,t) { const o=document.getElementById('toast'); o.textContent=m; o.className='toast'+(t?' '+t:''); o.classList.add('show'); setTimeout(()=>o.classList.remove('show'),4000); }
   </script>
 </body>
 </html>
