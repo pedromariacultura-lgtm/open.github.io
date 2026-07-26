@@ -89,7 +89,9 @@
     };
     const TEXT_ICONS = { threads: '@', x: 'X' };
 
-    fetch('data.json')
+    const DATA_URL = window.location.hostname === 'pedromariacultura-lgtm.github.io' ? 'data.json' : 'https://raw.githubusercontent.com/pedromariacultura-lgtm/open.github.io/staging/data.json';
+
+    fetch(DATA_URL)
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(data => {
         document.getElementById('tagline').textContent = data.tagline || '';
