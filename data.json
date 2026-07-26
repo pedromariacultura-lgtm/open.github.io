@@ -1,53 +1,53 @@
 {
-  "tagline": "Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.",
+  "tagline": "Desenvolvendo e Incentivando o Design Independente do Sul do Brasil. asdasasd",
   "links": [
     {
       "label": "Edital OPEN Select Natal (Dezembro)",
       "url": "https://forms.gle/rH6oTg8KGxFRfPjs7",
-      "platform": "edital",
       "desc": "Inscreva-se no processo seletivo",
+      "platform": "edital",
       "featured": true
     },
     {
       "label": "Instagram",
       "url": "https://instagram.com/open_designindependente",
-      "platform": "instagram",
       "desc": "",
+      "platform": "instagram",
       "featured": false
     },
     {
       "label": "TikTok",
       "url": "https://tiktok.com/@open_designindependente",
-      "platform": "tiktok",
       "desc": "",
+      "platform": "tiktok",
       "featured": false
     },
     {
       "label": "YouTube",
       "url": "https://www.youtube.com/@open_designindependente",
-      "platform": "youtube",
       "desc": "",
+      "platform": "youtube",
       "featured": false
     },
     {
       "label": "Threads",
       "url": "https://www.threads.com/@open_designindependente",
-      "platform": "threads",
       "desc": "",
+      "platform": "threads",
       "featured": false
     },
     {
       "label": "X / Twitter",
       "url": "https://x.com/opendesignindep",
-      "platform": "x",
       "desc": "",
+      "platform": "x",
       "featured": false
     },
     {
       "label": "Site Oficial",
       "url": "https://www.opendesignindependente.com.br",
-      "platform": "website",
       "desc": "",
+      "platform": "website",
       "featured": false
     }
   ]
