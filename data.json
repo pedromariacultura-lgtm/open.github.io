@@ -2,64 +2,11 @@
   "tagline": "Desenvolvendo e Incentivando o Design Independente do Sul do Brasil.",
   "links": [
     {
-<<<<<<< HEAD
-=======
-      "label": "Edital OPEN Select Natal (Dez)",
-      "url": "https://forms.gle/rH6oTg8KGxFRfPjs7",
-      "platform": "edital",
-      "desc": "Inscreva-se no processo seletivo",
-      "featured": true
-    },
-    {
->>>>>>> c85e5c1 (Add data.json + admin panel with GitHub OAuth Device Flow + dynamic index.html)
-      "label": "Instagram",
-      "url": "https://instagram.com/open_designindependente",
-      "platform": "instagram",
-      "desc": "",
-      "featured": false
-    },
-    {
-      "label": "TikTok",
-      "url": "https://tiktok.com/@open_designindependente",
-      "platform": "tiktok",
-      "desc": "",
-      "featured": false
-    },
-    {
-<<<<<<< HEAD
-      "label": "asdasd",
-      "url": "asdasd",
-      "platform": "custom",
-      "desc": "asd",
-      "featured": true
-=======
-      "label": "YouTube",
-      "url": "https://www.youtube.com/@open_designindependente",
-      "platform": "youtube",
-      "desc": "",
-      "featured": false
-    },
-    {
-      "label": "Threads",
-      "url": "https://www.threads.com/@open_designindependente",
-      "platform": "threads",
-      "desc": "",
-      "featured": false
-    },
-    {
-      "label": "X / Twitter",
-      "url": "https://x.com/opendesignindep",
-      "platform": "x",
-      "desc": "",
-      "featured": false
-    },
-    {
-      "label": "Site Oficial",
-      "url": "https://www.opendesignindependente.com.br",
+      "label": "Test Link",
+      "url": "https://example.com",
       "platform": "website",
-      "desc": "",
+      "desc": "test",
       "featured": false
->>>>>>> c85e5c1 (Add data.json + admin panel with GitHub OAuth Device Flow + dynamic index.html)
     }
   ]
 }
