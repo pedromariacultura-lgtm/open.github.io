@@ -172,6 +172,11 @@
         return trimmed;
       }
 
+      function escapeHtml(str) {
+        var div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
       function parseICal(text) {
         var events = [];
         var blocks = text.split('BEGIN:VEVENT');
@@ -235,10 +240,10 @@
           html += '<div class="timeline-dot"></div>';
           html += '<div class="timeline-card">';
           html += '<div class="timeline-date">' + formatDate(ev.start) + '</div>';
-          html += '<div class="timeline-name">' + ev.summary + '</div>';
+          html += '<div class="timeline-name">' + escapeHtml(ev.summary) + '</div>';
           var timeStr = formatTimeRange(ev.start, ev.end);
           if (timeStr) html += '<div class="timeline-time">' + timeStr + '</div>';
-          if (ev.location) html += '<div class="timeline-location">' + ev.location + '</div>';
+          if (ev.location) html += '<div class="timeline-location">' + escapeHtml(ev.location) + '</div>';
           html += '</div></div>';
         });
         html += '</div></div>';
