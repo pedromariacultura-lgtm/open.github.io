@@ -20,12 +20,14 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Montserrat', sans-serif; background: #E0E0E0; color: #454545; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 50px 20px 60px; }
     .container { max-width: 680px; width: 100%; display: flex; flex-direction: column; align-items: center; }
-    #app {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
+    .container { max-width: 680px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+    #app { width: 100%; }
     .avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 18px; box-shadow: 0 4px 30px rgba(0,0,0,0.15); display: block; margin-left: auto; margin-right: auto; }
     h1 { font-size: 24px; font-weight: 800; font-style: italic; margin-bottom: 6px; letter-spacing: -0.5px; color: #000; text-align: center; }
     .tagline { font-size: 15px; color: #000; text-align: center; margin-bottom: 32px; line-height: 1.5; max-width: 400px; }
@@ -33,7 +35,6 @@
     .link-card { display: flex; align-items: center; gap: 14px; width: 100%; padding: 16px 20px; background: #FFF; border: 1px solid #d4d4d4; border-radius: 2px; color: #454545; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s ease; }
     .link-card:hover { border-color: #000; box-shadow: 0 2px 12px rgba(0,0,0,0.1); transform: translateY(-1px); }
     .link-card .brand-icon { width: 28px; height: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-    .link-card .brand-icon img { width: 24px; height: 24px; border-radius: 4px; object-fit: contain; }
     .link-card .brand-icon svg { width: 22px; height: 22px; fill: currentColor; color: #8F8F8F; transition: color 0.2s ease; }
     .link-card:hover .brand-icon svg { color: #000; }
     .link-card .card-content { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; text-align: center; }
@@ -43,12 +44,19 @@
     .link-card .arrow { font-size: 14px; color: #C8C8C8; flex-shrink: 0; transition: all 0.2s ease; }
     .link-card:hover .arrow { transform: translateX(3px); color: #000; }
     .link-card.instagram:hover { border-color: #e1306c; }
+    .link-card.instagram:hover .brand-icon svg { color: #e1306c; }
     .link-card.tiktok:hover { border-color: #000; }
+    .link-card.tiktok:hover .brand-icon svg { color: #000; }
     .link-card.youtube:hover { border-color: #ff0000; }
+    .link-card.youtube:hover .brand-icon svg { color: #ff0000; }
     .link-card.threads:hover { border-color: #000; }
+    .link-card.threads:hover .brand-icon svg { color: #000; }
     .link-card.x:hover { border-color: #000; }
+    .link-card.x:hover .brand-icon svg { color: #000; }
     .link-card.website:hover { border-color: #000; }
+    .link-card.website:hover .brand-icon svg { color: #000; }
     .link-card.edital:hover { border-color: #C3D940; }
+    .link-card.edital:hover .brand-icon svg { color: #C3D940; }
     @keyframes neon-pulse { 0% { border-color: #C3D940; box-shadow: 0 0 10px rgba(195,217,64,0.6),0 0 40px rgba(195,217,64,0.3),0 0 80px rgba(195,217,64,0.1); background: #FFF; } 30% { border-color: #e6ff66; box-shadow: 0 0 20px rgba(230,255,102,0.9),0 0 60px rgba(230,255,102,0.5),0 0 100px rgba(230,255,102,0.25); background: #faffed; } 60% { border-color: #C3D940; box-shadow: 0 0 15px rgba(195,217,64,0.7),0 0 50px rgba(195,217,64,0.4),0 0 90px rgba(195,217,64,0.15); background: #f5ffe0; } 100% { border-color: #C3D940; box-shadow: 0 0 10px rgba(195,217,64,0.6),0 0 40px rgba(195,217,64,0.3),0 0 80px rgba(195,217,64,0.1); background: #FFF; } }
     @keyframes text-pulse { 0%,100% { transform: scale(1); color: #000; } 30% { transform: scale(1.08); color: #567000; } 60% { transform: scale(1.02); color: #000; } }
     @keyframes desc-pulse { 0%,100% { opacity: 0.7; } 30% { opacity: 1; } 60% { opacity: 0.85; } }
@@ -58,6 +66,7 @@
     .link-card.featured:hover { animation: none; border-color: #e6ff66; box-shadow: 0 0 25px rgba(230,255,102,0.9),0 0 60px rgba(230,255,102,0.5),0 0 120px rgba(230,255,102,0.25); background: #faffed; transform: scale(1.02); }
     .link-card.featured:hover .label { animation: none; transform: scale(1.08); color: #567000; }
     .link-card.featured:hover .desc { animation: none; opacity: 1; }
+    .link-card.featured .brand-icon svg { color: #C3D940; }
     .footer { margin-top: 44px; font-size: 11px; color: #B0B0B0; text-align: center; }
     .footer a { color: #8F8F8F; text-decoration: none; }
     .footer a:hover { color: #000; }
@@ -77,20 +86,17 @@
   </div>
   <script>
     (function(){
-      var TEXT_ICONS = { threads: '@', x: 'X' };
-
-      function getDomain(url) {
-        if (!url) return null;
-        var s = String(url);
-        if (s.indexOf("forms.gle") !== -1 || s.indexOf("docs.google.com/forms") !== -1) return "docs.google.com";
-        try {
-          return new URL(url).hostname;
-        } catch(e) {
-          return null;
-        }
-      }
+      const SVG_ICONS = {
+        instagram: '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg>',
+        tiktok: '<svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.88c.28 0 .54.04.79.1v-3.5a6.33 6.33 0 0 0-.79-.05A6.36 6.36 0 0 0 3.5 15.3a6.36 6.36 0 0 0 6.37 6.37 6.36 6.36 0 0 0 6.37-6.37V9.3a8.26 8.26 0 0 0 4.76 1.5v-3.4a4.83 4.83 0 0 1-1.41-.71z"/></svg>',
+        youtube: '<svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 0 0 .5 6.19 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.81 3.02 3.02 0 0 0 2.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.81zM9.55 15.57V8.43L16 12l-6.45 3.57z"/></svg>',
+        edital: '<svg viewBox="0 0 24 24"><path d="M16 2H8C6.9 2 6 2.9 6 4v16c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 2h4v2h-4V4zm4 16H8V4h2v2h4V4h2v16z"/><path d="M12 12l-3 3h2v4h2v-4h2l-3-3z"/></svg>',
+        website: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse cx="12" cy="12" rx="4" ry="10" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.5"/></svg>'
+      };
+      const TEXT_ICONS = { threads: '@', x: 'X' };
 
       function safeUrl(url) {
+        // Prevent XSS via javascript:/data: URLs
         if (!url) return '#';
         var trimmed = String(url).trim();
         if (/^\s*(javascript|data|vbscript):/i.test(trimmed)) return '#';
@@ -105,31 +111,19 @@
         container.innerHTML = '';
         (data.links || []).forEach(function(link) {
           var card = document.createElement('a');
-          var href = safeUrl(link.url);
-          card.href = href;
+          card.href = safeUrl(link.url);
           card.target = '_blank';
           card.rel = 'noopener noreferrer';
           card.className = 'link-card ' + (link.platform || 'custom') + (link.featured ? ' featured' : '');
           var iconSpan = document.createElement('span');
           iconSpan.className = 'brand-icon';
-
-          var domain = getDomain(href);
-          if (domain) {
-            var faviconImg = document.createElement('img');
-            faviconImg.src = 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(domain) + '&sz=64';
-            faviconImg.alt = '';
-            faviconImg.onerror = function() {
-              this.style.display = 'none';
-              var fallback = document.createElement('span');
-              fallback.textContent = TEXT_ICONS[link.platform] || '🔗';
-              fallback.style.fontSize = '16px';
-              this.parentNode.appendChild(fallback);
-            };
-            iconSpan.appendChild(faviconImg);
+          if (SVG_ICONS[link.platform]) {
+            iconSpan.innerHTML = SVG_ICONS[link.platform];
+          } else if (link.platform === 'custom' && link.label) {
+            iconSpan.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
           } else {
-            iconSpan.textContent = TEXT_ICONS[link.platform] || '🔗';
+            iconSpan.textContent = TEXT_ICONS[link.platform] || '';
           }
-
           card.appendChild(iconSpan);
           var content = document.createElement('span');
           content.className = 'card-content';
