@@ -80,6 +80,9 @@
       var TEXT_ICONS = { threads: '@', x: 'X' };
 
       function getDomain(url) {
+        if (!url) return null;
+        var s = String(url);
+        if (s.indexOf("forms.gle") !== -1 || s.indexOf("docs.google.com/forms") !== -1) return "docs.google.com";
         try {
           return new URL(url).hostname;
         } catch(e) {
