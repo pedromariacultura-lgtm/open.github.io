@@ -80,16 +80,10 @@
     .link-card.featured:hover { animation: gradient-slide 1.5s linear infinite; box-shadow: 0 0 20px rgba(195,217,64,0.5); transform: scale(1.02); }
     .link-card.featured:hover .label { animation: none; transform: scale(1.08); color: #567000; }
     .link-card.featured:hover .desc { animation: none; opacity: 1; }
-    .events-section { width: 100%; margin-bottom: 24px; }
-    .events-title { font-size: 13px; font-weight: 700; font-style: italic; color: #000; margin-bottom: 10px; text-align: center; letter-spacing: 0.5px; text-transform: uppercase; }
-    .event-card { display: flex; align-items: center; gap: 12px; background: #FFF; border: 1px solid #d4d4d4; border-radius: 2px; padding: 12px 16px; margin-bottom: 8px; }
-    .event-date { flex-shrink: 0; width: 48px; height: 48px; background: #000; color: #fff; border-radius: 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
-    .event-date .day { font-size: 18px; font-weight: 800; }
-    .event-date .month { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
-    .event-info { flex: 1; }
-    .event-name { font-size: 13px; font-weight: 700; font-style: italic; color: #000; }
-    .event-time { font-size: 11px; color: #8F8F8F; margin-top: 2px; }
-    .events-empty { text-align: center; font-size: 12px; color: #8F8F8F; padding: 16px; }
+    .calendar-section { width: 100%; margin-bottom: 24px; }
+    .calendar-section .calendar-title { font-size: 13px; font-weight: 700; font-style: italic; color: #000; margin-bottom: 10px; text-align: center; letter-spacing: 0.5px; text-transform: uppercase; }
+    .calendar-embed { width: 100%; border: 1px solid #d4d4d4; border-radius: 2px; overflow: hidden; }
+    .calendar-embed iframe { display: block; width: 100%; height: 200px; border: none; }
     .footer { margin-top: 44px; font-size: 11px; color: #B0B0B0; text-align: center; }
     .footer a { color: #8F8F8F; text-decoration: none; }
     .footer a:hover { color: #000; }
@@ -101,7 +95,12 @@
       <img src="logo.jpg" alt="OPEN Design Independente" class="avatar">
       <h1>Links OPEN Design Independente</h1>
       <p class="tagline" id="tagline">Carregando...</p>
-      <div class="events-section" id="events-section"></div>
+      <div class="calendar-section">
+        <div class="calendar-title">Próximos Eventos</div>
+        <div class="calendar-embed">
+          <iframe src="https://calendar.google.com/calendar/embed?src=e79abcb95c1b1da56e44c0f4ff81ab7455193f83d465e5877f23335a9cb98e17%40group.calendar.google.com&ctz=America%2FSao_Paulo&mode=AGENDA&showTitle=0&showNav=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0&bgcolor=%23ffffff&color=%23000000" frameborder="0" scrolling="no"></iframe>
+        </div>
+      </div>
       <div class="links" id="links-container"></div>
       <div class="footer">
         <a href="https://pedromariacultura-lgtm.github.io/open.github.io" target="_blank">OPEN Design Independente</a>
@@ -111,7 +110,6 @@
   <script>
     (function(){
       var TEXT_ICONS = { threads: '@', x: 'X' };
-      var MONTHS = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 
       var BRAND_COLORS = {
         instagram: ['rgba(225,48,108,0.9)', 'rgba(247,119,55,0.9)', 'rgba(131,58,180,0.9)'],
@@ -163,63 +161,6 @@
         if (trimmed === '#') return '#';
         if (!/^https?:\/\//i.test(trimmed)) trimmed = 'https://' + trimmed;
         return trimmed;
-      }
-
-      function parseICal(text) {
-        var events = [];
-        var blocks = text.split('BEGIN:VEVENT');
-        for (var i = 1; i < blocks.length; i++) {
-          var block = blocks[i].split('END:VEVENT')[0];
-          var summary = (block.match(/SUMMARY:(.+)/) || [])[1] || '';
-          var dtstart = (block.match(/DTSTART[^:]*:(.+)/) || [])[1] || '';
-          var date = null;
-          if (dtstart) {
-            var clean = dtstart.trim().replace(/Z$/, '');
-            if (clean.length === 8) {
-              date = new Date(clean.slice(0,4), parseInt(clean.slice(4,6))-1, clean.slice(6,8));
-            } else {
-              var m = clean.match(/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})/);
-              if (m) date = new Date(m[1], m[2]-1, m[3], m[4], m[5]);
-            }
-          }
-          if (date && summary) events.push({ date: date, summary: summary.replace(/\\,/g, ',').replace(/\\n/g, ' ') });
-        }
-        return events;
-      }
-
-      function formatTime(d) {
-        var h = d.getHours(), m = d.getMinutes();
-        if (h === 0 && m === 0) return '';
-        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-      }
-
-      function renderEvents(events) {
-        var section = document.getElementById('events-section');
-        var now = new Date();
-        now.setHours(0,0,0,0);
-        var upcoming = events.filter(function(e) { return e.date >= now; }).sort(function(a,b) { return a.date - b.date; }).slice(0, 3);
-        if (upcoming.length === 0) {
-          section.innerHTML = '';
-          return;
-        }
-        var html = '<div class="events-title">Próximos Eventos</div>';
-        upcoming.forEach(function(ev) {
-          var d = ev.date;
-          var day = d.getDate();
-          var month = MONTHS[d.getMonth()];
-          var time = formatTime(d);
-          html += '<div class="event-card"><div class="event-date"><span class="day">' + day + '</span><span class="month">' + month + '</span></div><div class="event-info"><div class="event-name">' + ev.summary + '</div>' + (time ? '<div class="event-time">' + time + '</div>' : '') + '</div></div>';
-        });
-        section.innerHTML = html;
-      }
-
-      function loadCalendar() {
-        var icalUrl = 'https://calendar.google.com/calendar/ical/e79abcb95c1b1da56e44c0f4ff81ab7455193f83d465e5877f23335a9cb98e17%40group.calendar.google.com/public/basic.ics';
-        var proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(icalUrl);
-        fetch(proxyUrl, { cache: 'no-store' })
-          .then(function(r) { return r.ok ? r.text() : Promise.reject(); })
-          .then(function(text) { renderEvents(parseICal(text)); })
-          .catch(function() { document.getElementById('events-section').innerHTML = ''; });
       }
 
       function render(data) {
@@ -279,8 +220,6 @@
           container.appendChild(card);
         });
       }
-
-      loadCalendar();
 
       fetch('https://api.github.com/repos/pedromariacultura-lgtm/open.github.io/contents/data.json', {
         cache: 'no-store',
