@@ -45,7 +45,7 @@
       position: relative;
       background:
         linear-gradient(#FFF, #FFF) padding-box,
-        linear-gradient(90deg, var(--gc1, rgba(0,0,0,0.2)), var(--gc2, rgba(0,0,0,0.2)), var(--gc3, rgba(0,0,0,0.2)), var(--gc1, rgba(0,0,0,0.2))) border-box;
+        linear-gradient(90deg, var(--gc1, rgba(0,0,0,0.9)), var(--gc2, rgba(0,0,0,0.9)), var(--gc3, rgba(0,0,0,0.9)), var(--gc1, rgba(0,0,0,0.9))) border-box;
       background-size: 100% 100%, 300% 100%;
       border: 2px solid transparent;
       animation: gradient-slide 4s linear infinite;
@@ -59,7 +59,7 @@
       box-shadow: 0 2px 12px rgba(0,0,0,0.1);
       background:
         linear-gradient(#FFF, #FFF) padding-box,
-        linear-gradient(90deg, var(--gc1, rgba(0,0,0,0.2)), var(--gc2, rgba(0,0,0,0.2)), var(--gc3, rgba(0,0,0,0.2)), var(--gc1, rgba(0,0,0,0.2))) border-box;
+        linear-gradient(90deg, var(--gc1, rgba(0,0,0,0.9)), var(--gc2, rgba(0,0,0,0.9)), var(--gc3, rgba(0,0,0,0.9)), var(--gc1, rgba(0,0,0,0.9))) border-box;
       background-size: 100% 100%, 300% 100%;
       animation: gradient-slide 2s linear infinite;
     }
@@ -71,7 +71,7 @@
     .link-card .desc.show { display: block; }
     .link-card .arrow { font-size: 14px; color: #C8C8C8; flex-shrink: 0; transition: all 0.2s ease; }
     .link-card:hover .arrow { transform: translateX(3px); color: #000; }
-    @keyframes neon-pulse { 0% { background: linear-gradient(#FFF, #FFF) padding-box, linear-gradient(90deg, var(--gc1, rgba(195,217,64,0.2)), var(--gc2, rgba(195,217,64,0.2)), var(--gc3, rgba(195,217,64,0.2)), var(--gc1, rgba(195,217,64,0.2))) border-box; background-size: 100% 100%, 300% 100%; } 100% { background: linear-gradient(#FFF, #FFF) padding-box, linear-gradient(90deg, var(--gc1, rgba(195,217,64,0.2)), var(--gc2, rgba(195,217,64,0.2)), var(--gc3, rgba(195,217,64,0.2)), var(--gc1, rgba(195,217,64,0.2))) border-box; background-size: 100% 100%, 300% 100%; } }
+    @keyframes neon-pulse { 0% { background: linear-gradient(#FFF, #FFF) padding-box, linear-gradient(90deg, var(--gc1, rgba(195,217,64,0.9)), var(--gc2, rgba(195,217,64,0.9)), var(--gc3, rgba(195,217,64,0.9)), var(--gc1, rgba(195,217,64,0.9))) border-box; background-size: 100% 100%, 300% 100%; } 100% { background: linear-gradient(#FFF, #FFF) padding-box, linear-gradient(90deg, var(--gc1, rgba(195,217,64,0.9)), var(--gc2, rgba(195,217,64,0.9)), var(--gc3, rgba(195,217,64,0.9)), var(--gc1, rgba(195,217,64,0.9))) border-box; background-size: 100% 100%, 300% 100%; } }
     .link-card.featured { border-width: 2px; animation: gradient-slide 3s linear infinite; box-shadow: 0 0 10px rgba(195,217,64,0.3); }
     .link-card.featured .label { display: inline-block; animation: text-pulse 2.2s ease-in-out infinite; }
     @keyframes text-pulse { 0%,100% { transform: scale(1); color: #000; } 30% { transform: scale(1.08); color: #567000; } 60% { transform: scale(1.02); color: #000; } }
@@ -103,14 +103,14 @@
 
       // Brand color palettes (3 colors each, for gradient), 80% transparent
       var BRAND_COLORS = {
-        instagram: ['rgba(225,48,108,0.2)', 'rgba(247,119,55,0.2)', 'rgba(131,58,180,0.2)'],
-        tiktok:    ['rgba(0,242,234,0.2)', 'rgba(255,0,80,0.2)', 'rgba(0,242,234,0.2)'],
-        youtube:   ['rgba(255,0,0,0.2)', 'rgba(40,40,40,0.2)', 'rgba(255,0,0,0.2)'],
-        threads:   ['rgba(0,0,0,0.2)', 'rgba(100,100,100,0.2)', 'rgba(0,0,0,0.2)'],
-        x:         ['rgba(0,0,0,0.2)', 'rgba(29,155,240,0.2)', 'rgba(0,0,0,0.2)'],
-        website:   ['rgba(100,100,100,0.2)', 'rgba(0,0,0,0.2)', 'rgba(100,100,100,0.2)'],
-        edital:    ['rgba(195,217,64,0.2)', 'rgba(168,191,47,0.2)', 'rgba(195,217,64,0.2)'],
-        custom:    ['rgba(143,143,143,0.2)', 'rgba(200,200,200,0.2)', 'rgba(143,143,143,0.2)']
+        instagram: ['rgba(225,48,108,0.9)', 'rgba(247,119,55,0.9)', 'rgba(131,58,180,0.9)'],
+        tiktok:    ['rgba(0,242,234,0.9)', 'rgba(255,0,80,0.9)', 'rgba(0,242,234,0.9)'],
+        youtube:   ['rgba(255,0,0,0.9)', 'rgba(40,40,40,0.9)', 'rgba(255,0,0,0.9)'],
+        threads:   ['rgba(0,0,0,0.9)', 'rgba(100,100,100,0.9)', 'rgba(0,0,0,0.9)'],
+        x:         ['rgba(0,0,0,0.9)', 'rgba(29,155,240,0.9)', 'rgba(0,0,0,0.9)'],
+        website:   ['rgba(100,100,100,0.9)', 'rgba(0,0,0,0.9)', 'rgba(100,100,100,0.9)'],
+        edital:    ['rgba(195,217,64,0.9)', 'rgba(168,191,47,0.9)', 'rgba(195,217,64,0.9)'],
+        custom:    ['rgba(143,143,143,0.9)', 'rgba(200,200,200,0.9)', 'rgba(143,143,143,0.9)']
       };
 
       // Known domain -> brand mapping
