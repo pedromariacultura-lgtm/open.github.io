@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPEN Design - Dashboard Financeiro</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.49.1/dist/apexcharts.min.js"></script>
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; }
+  .kpi-card {
+    background: white;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    background-image: linear-gradient(white, white), linear-gradient(135deg, #6366f1, #ec4899);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: box-shadow 0.2s;
+  }
+  .kpi-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .section-card {
+    background: white;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    background-image: linear-gradient(white, white), linear-gradient(135deg, #6366f1, #ec4899);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .project-row { border-bottom: 1px solid #f1f5f9; }
+  .project-row:last-child { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-yellow { background: #fef9c3; color: #854d0e; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .loading { text-align: center; padding: 3rem; color: #94a3b8; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div class="max-w-7xl mx-auto px-4 py-6">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">OPEN Design Independente</h1>
+      <p class="text-sm text-slate-500">Dashboard Financeiro</p>
+    </div>
+    <div class="text-right">
+      <p class="text-sm text-slate-400" id="last-update">Carregando...</p>
+      <button onclick="loadData()" class="mt-1 text-xs text-indigo-600 hover:text-indigo-800">Atualizar</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6" id="kpis">
+    <div class="loading col-span-full">Carregando dados...</div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="section-card">
+      <h2 class="text-lg font-semibold text-slate-700 mb-4">Receita x Custos por Projeto</h2>
+      <div id="chart-projetos"></div>
+    </div>
+    <div class="section-card">
+      <h2 class="text-lg font-semibold text-slate-700 mb-4">Fluxo de Caixa</h2>
+      <div id="chart-fluxo"></div>
+    </div>
+  </div>
+
+  <!-- Tabela por projeto -->
+  <div class="section-card mb-6">
+    <h2 class="text-lg font-semibold text-slate-700 mb-4">Resultado por Evento</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" id="table-projetos">
+        <thead>
+          <tr class="text-left text-slate-400 border-b border-slate-200">
+            <th class="pb-2 pr-4">Evento</th>
+            <th class="pb-2 pr-4 text-right">Receita</th>
+            <th class="pb-2 pr-4 text-right">Custos</th>
+            <th class="pb-2 pr-4 text-right">Lucro</th>
+            <th class="pb-2 pr-4 text-right">Margem</th>
+            <th class="pb-2 text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-projetos"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Atrasados -->
+  <div class="section-card">
+    <h2 class="text-lg font-semibold text-slate-700 mb-2">Títulos Atrasados</h2>
+    <p class="text-sm text-slate-500 mb-4" id="atrasados-count"></p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" id="table-atrasados">
+        <thead>
+          <tr class="text-left text-slate-400 border-b border-slate-200">
+            <th class="pb-2 pr-4">Documento</th>
+            <th class="pb-2 pr-4">Projeto</th>
+            <th class="pb-2 pr-4 text-right">Valor</th>
+            <th class="pb-2 text-right">Vencimento</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-atrasados"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="text-center text-xs text-slate-400 mt-8">
+    Fonte: Omie ERP | Atualização via sync automatico | OPEN Design Independente
+  </p>
+
+</div>
+
+<script>
+async function loadData() {
+  try {
+    const res = await fetch('data/financeiro.json?v=' + Date.now());
+    const data = await res.json();
+    renderKPIs(data.kpis);
+    renderProjetosChart(data.projetos);
+    renderFluxoChart(data.fluxo_caixa);
+    renderTable(data.projetos);
+    renderAtrasados(data.atrasados, data.kpis);
+    document.getElementById('last-update').textContent = 'Atualizado: ' + data.gerado_em;
+  } catch (e) {
+    document.getElementById('kpis').innerHTML = '<div class="loading col-span-full">Erro ao carregar dados. Verifique se o arquivo financeiro.json existe.</div>';
+    console.error(e);
+  }
+}
+
+function fmt(v) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+}
+
+function renderKPIs(k) {
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi-card">
+      <p class="text-xs text-slate-500 mb-1">A Receber</p>
+      <p class="text-xl font-bold text-indigo-600">${fmt(k.a_receber)}</p>
+    </div>
+    <div class="kpi-card">
+      <p class="text-xs text-slate-500 mb-1">Recebido</p>
+      <p class="text-xl font-bold text-green-600">${fmt(k.recebido)}</p>
+    </div>
+    <div class="kpi-card">
+      <p class="text-xs text-slate-500 mb-1">Inadimplência</p>
+      <p class="text-xl font-bold ${k.inadimplente > 0 ? 'text-red-600' : 'text-slate-700'}">${fmt(k.inadimplente)}</p>
+      <p class="text-xs text-slate-400">${k.inadimplencia_pct}% do total</p>
+    </div>
+    <div class="kpi-card">
+      <p class="text-xs text-slate-500 mb-1">A Pagar</p>
+      <p class="text-xl font-bold text-orange-600">${fmt(k.a_pagar)}</p>
+    </div>
+    <div class="kpi-card">
+      <p class="text-xs text-slate-500 mb-1">Saldo Projetado</p>
+      <p class="text-xl font-bold ${k.saldo >= 0 ? 'text-green-600' : 'text-red-600'}">${fmt(k.saldo)}</p>
+    </div>
+  `;
+}
+
+function renderProjetosChart(projetos) {
+  const top = projetos.filter(p => p.receita > 0).slice(0, 8);
+  const chart = new ApexCharts(document.getElementById('chart-projetos'), {
+    chart: { type: 'bar', height: 300, stacked: false,
+      toolbar: { show: false },
+      background: 'transparent' },
+    series: [
+      { name: 'Receita', data: top.map(p => p.receita) },
+      { name: 'Custos', data: top.map(p => p.custo) },
+    ],
+    xaxis: { categories: top.map(p => p.nome.substring(0, 20)) },
+    colors: ['#6366f1', '#f59e0b'],
+    plotOptions: { bar: { borderRadius: 4 } },
+    legend: { position: 'top' },
+    tooltip: { y: { formatter: v => fmt(v) } },
+  });
+  chart.render();
+}
+
+function renderFluxoChart(fluxo) {
+  const chart = new ApexCharts(document.getElementById('chart-fluxo'), {
+    chart: { type: 'line', height: 300,
+      toolbar: { show: false },
+      background: 'transparent' },
+    series: [
+      { name: 'A Receber', data: fluxo.map(f => f.receber) },
+      { name: 'Recebido', data: fluxo.map(f => f.recebido) },
+      { name: 'A Pagar', data: fluxo.map(f => f.pagar) },
+      { name: 'Pago', data: fluxo.map(f => f.pago) },
+    ],
+    xaxis: { categories: fluxo.map(f => f.mes) },
+    colors: ['#6366f1', '#22c55e', '#f59e0b', '#ef4444'],
+    stroke: { width: [2, 2, 2, 2], curve: 'smooth' },
+    markers: { size: 4 },
+    legend: { position: 'top' },
+    tooltip: { y: { formatter: v => fmt(v) } },
+  });
+  chart.render();
+}
+
+function renderTable(projetos) {
+  document.getElementById('tbody-projetos').innerHTML = projetos.map(p => {
+    const badge = p.margem > 40 ? 'badge-green' : p.margem > 0 ? 'badge-yellow' : 'badge-red';
+    const status = p.margem > 40 ? 'Saudavel' : p.margem > 0 ? 'Atencao' : 'Prejuizo';
+    return `<tr class="project-row hover:bg-slate-50">
+      <td class="py-2 pr-4 font-medium text-slate-700">${p.nome}</td>
+      <td class="py-2 pr-4 text-right text-slate-600">${fmt(p.receita)}</td>
+      <td class="py-2 pr-4 text-right text-slate-600">${fmt(p.custo)}</td>
+      <td class="py-2 pr-4 text-right font-semibold ${p.lucro >= 0 ? 'text-green-600' : 'text-red-600'}">${fmt(p.lucro)}</td>
+      <td class="py-2 pr-4 text-right text-slate-600">${p.margem}%</td>
+      <td class="py-2 text-center"><span class="badge ${badge}">${status}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAtrasados(atrasados, kpis) {
+  document.getElementById('atrasados-count').textContent =
+    `${atrasados.length} titulos atrasados - Total: ${fmt(atrasados.reduce((s, a) => s + a.valor, 0))}`;
+  const html = atrasados.map(a => `<tr class="project-row hover:bg-slate-50">
+    <td class="py-2 pr-4 font-medium text-slate-700">${a.doc}</td>
+    <td class="py-2 pr-4 text-slate-600">${a.projeto}</td>
+    <td class="py-2 pr-4 text-right text-red-600 font-semibold">${fmt(a.valor)}</td>
+    <td class="py-2 text-right text-slate-600">${a.vencimento}</td>
+  </tr>`).join('');
+  document.getElementById('tbody-atrasados').innerHTML = html || '<tr><td colspan="4" class="py-4 text-center text-slate-400">Nenhum titulo atrasado</td></tr>';
+}
+
+loadData();
+</script>
+</body>
+</html>
