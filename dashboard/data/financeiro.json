@@ -1,0 +1,323 @@
+{
+  "gerado_em": "30/07/2026 21:04",
+  "timestamp": "2026-07-30T21:04:18.078231",
+  "kpis": {
+    "a_receber": 70865.0,
+    "recebido": 313960.0,
+    "inadimplente": 70865.0,
+    "a_pagar": 14399.0,
+    "pago": 224249.33,
+    "saldo": 56466.0,
+    "receita_total": 384825.0,
+    "custo_total": 238648.33,
+    "lucro": 146176.67,
+    "margem": 38.0,
+    "inadimplencia_pct": 18.4
+  },
+  "projetos": [
+    {
+      "nome": "Superfeira",
+      "receita": 251220.0,
+      "recebido": 201220.0,
+      "a_receber": 50000.0,
+      "custo": 11190.78,
+      "pago": 11190.78,
+      "a_pagar": 0.0,
+      "lucro": 240029.22,
+      "margem": 95.5
+    },
+    {
+      "nome": "Super Feira 2026",
+      "receita": 40640.0,
+      "recebido": 40640.0,
+      "a_receber": 0.0,
+      "custo": 172311.53,
+      "pago": 162311.53,
+      "a_pagar": 10000.0,
+      "lucro": -131671.53,
+      "margem": -324.0
+    },
+    {
+      "nome": "Rota do Design",
+      "receita": 27700.0,
+      "recebido": 27700.0,
+      "a_receber": 0.0,
+      "custo": 0.0,
+      "pago": 0.0,
+      "a_pagar": 0.0,
+      "lucro": 27700.0,
+      "margem": 100.0
+    },
+    {
+      "nome": "OPEN Select Casa de Afeto 07/2026",
+      "receita": 19397.0,
+      "recebido": 0.0,
+      "a_receber": 19397.0,
+      "custo": 4000.0,
+      "pago": 0.0,
+      "a_pagar": 4000.0,
+      "lucro": 15397.0,
+      "margem": 79.4
+    },
+    {
+      "nome": "Cota Apoio Mostra Nacional",
+      "receita": 15000.0,
+      "recebido": 15000.0,
+      "a_receber": 0.0,
+      "custo": 0.0,
+      "pago": 0.0,
+      "a_pagar": 0.0,
+      "lucro": 15000.0,
+      "margem": 100.0
+    },
+    {
+      "nome": "Superfeira 2026 Estande 40",
+      "receita": 8800.0,
+      "recebido": 8800.0,
+      "a_receber": 0.0,
+      "custo": 1894.4,
+      "pago": 1894.4,
+      "a_pagar": 0.0,
+      "lucro": 6905.6,
+      "margem": 78.5
+    },
+    {
+      "nome": "Geral/Operacional",
+      "receita": 6400.0,
+      "recebido": 6400.0,
+      "a_receber": 0.0,
+      "custo": 12466.02,
+      "pago": 12067.02,
+      "a_pagar": 399.0,
+      "lucro": -6066.02,
+      "margem": -94.8
+    },
+    {
+      "nome": "Super Feira 2026 Estande 44",
+      "receita": 5600.0,
+      "recebido": 5600.0,
+      "a_receber": 0.0,
+      "custo": 1168.0,
+      "pago": 1168.0,
+      "a_pagar": 0.0,
+      "lucro": 4432.0,
+      "margem": 79.1
+    },
+    {
+      "nome": "Super Feira 2026 Estande 22",
+      "receita": 5000.0,
+      "recebido": 5000.0,
+      "a_receber": 0.0,
+      "custo": 1442.0,
+      "pago": 1442.0,
+      "a_pagar": 0.0,
+      "lucro": 3558.0,
+      "margem": 71.2
+    },
+    {
+      "nome": "SuperFeira 2026 Estande 67",
+      "receita": 3600.0,
+      "recebido": 3600.0,
+      "a_receber": 0.0,
+      "custo": 18075.6,
+      "pago": 18075.6,
+      "a_pagar": 0.0,
+      "lucro": -14475.6,
+      "margem": -402.1
+    },
+    {
+      "nome": "OPEN Select Natal 2026",
+      "receita": 1468.0,
+      "recebido": 0.0,
+      "a_receber": 1468.0,
+      "custo": 0.0,
+      "pago": 0.0,
+      "a_pagar": 0.0,
+      "lucro": 1468.0,
+      "margem": 100.0
+    },
+    {
+      "nome": "Superfeira Estande 50",
+      "receita": 0.0,
+      "recebido": 0.0,
+      "a_receber": 0.0,
+      "custo": 600.0,
+      "pago": 600.0,
+      "a_pagar": 0.0,
+      "lucro": -600.0,
+      "margem": 0
+    },
+    {
+      "nome": "Empresa",
+      "receita": 0.0,
+      "recebido": 0.0,
+      "a_receber": 0.0,
+      "custo": 15500.0,
+      "pago": 15500.0,
+      "a_pagar": 0.0,
+      "lucro": -15500.0,
+      "margem": 0
+    }
+  ],
+  "fluxo_caixa": [
+    {
+      "mes": "02/2026",
+      "receber": 9390.0,
+      "pagar": 1508.0,
+      "recebido": 9390.0,
+      "pago": 1508.0,
+      "saldo": 7882.0
+    },
+    {
+      "mes": "03/2026",
+      "receber": 37321.0,
+      "pagar": 3110.4,
+      "recebido": 37321.0,
+      "pago": 3110.4,
+      "saldo": 34210.6
+    },
+    {
+      "mes": "04/2026",
+      "receber": 266049.0,
+      "pagar": 131169.45,
+      "recebido": 266049.0,
+      "pago": 131169.45,
+      "saldo": 134879.55
+    },
+    {
+      "mes": "05/2026",
+      "receber": 880.0,
+      "pagar": 70663.48,
+      "recebido": 880.0,
+      "pago": 70663.48,
+      "saldo": -69783.48
+    },
+    {
+      "mes": "06/2026",
+      "receber": 320.0,
+      "pagar": 17798.0,
+      "recebido": 320.0,
+      "pago": 17798.0,
+      "saldo": -17478.0
+    },
+    {
+      "mes": "07/2026",
+      "receber": 70865.0,
+      "pagar": 14399.0,
+      "recebido": 0.0,
+      "pago": 0.0,
+      "saldo": 56466.0
+    }
+  ],
+  "atrasados": [
+    {
+      "doc": "RPS 741",
+      "projeto": "Superfeira",
+      "valor": 50000.0,
+      "vencimento": "25/07/2026",
+      "cliente": "5762520630"
+    },
+    {
+      "doc": "RPS 753",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 2108.0,
+      "vencimento": "17/07/2026",
+      "cliente": "5825281581"
+    },
+    {
+      "doc": "RPS 749",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1468.0,
+      "vencimento": "15/07/2026",
+      "cliente": "5824023667"
+    },
+    {
+      "doc": "RPS 754",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1468.0,
+      "vencimento": "17/07/2026",
+      "cliente": "5761081370"
+    },
+    {
+      "doc": "RPS 755",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1468.0,
+      "vencimento": "17/07/2026",
+      "cliente": "5825285832"
+    },
+    {
+      "doc": "RPS 756",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1468.0,
+      "vencimento": "17/07/2026",
+      "cliente": "5825287095"
+    },
+    {
+      "doc": "RPS 758",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1468.0,
+      "vencimento": "17/07/2026",
+      "cliente": "5825302890"
+    },
+    {
+      "doc": "RPS 759",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1468.0,
+      "vencimento": "17/07/2026",
+      "cliente": "5825344525"
+    },
+    {
+      "doc": "RPS 760",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1468.0,
+      "vencimento": "17/07/2026",
+      "cliente": "5825346454"
+    },
+    {
+      "doc": "RPS 762",
+      "projeto": "OPEN Select Natal 2026",
+      "valor": 1468.0,
+      "vencimento": "22/07/2026",
+      "cliente": "5761065103"
+    },
+    {
+      "doc": "RPS 763",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1468.0,
+      "vencimento": "24/07/2026",
+      "cliente": "5829421559"
+    },
+    {
+      "doc": "RPS 761",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1450.0,
+      "vencimento": "17/07/2026",
+      "cliente": "5824124323"
+    },
+    {
+      "doc": "RPS 750",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1365.0,
+      "vencimento": "15/07/2026",
+      "cliente": "5824086108"
+    },
+    {
+      "doc": "RPS 751",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1365.0,
+      "vencimento": "15/07/2026",
+      "cliente": "5824112443"
+    },
+    {
+      "doc": "RPS 752",
+      "projeto": "OPEN Select Casa de Afeto 07/2026",
+      "valor": 1365.0,
+      "vencimento": "15/07/2026",
+      "cliente": "5824124323"
+    }
+  ],
+  "meta_2026": {
+    "receita_projetada": 681000,
+    "lucro_projetado": 436000
+  }
+}
